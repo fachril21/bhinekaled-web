@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useState } from "react";
+import { isUnoptimizedImage } from "@/lib/image";
 import type { ProductImage } from "@/lib/queries/products";
 
 type ProductGalleryProps = {
@@ -24,6 +25,7 @@ export function ProductGallery({ images, productName }: ProductGalleryProps) {
             sizes="(min-width: 1024px) 50vw, 100vw"
             className="object-cover"
             priority
+            unoptimized={isUnoptimizedImage(activeImage.url)}
           />
         ) : (
           <ImagePlaceholder />
@@ -48,6 +50,7 @@ export function ProductGallery({ images, productName }: ProductGalleryProps) {
                 fill
                 sizes="64px"
                 className="object-cover"
+                unoptimized={isUnoptimizedImage(image.url)}
               />
             </button>
           ))}

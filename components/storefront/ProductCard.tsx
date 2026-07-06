@@ -3,13 +3,15 @@ import Link from "next/link";
 import { Price } from "@/components/ui/Price";
 import { AddToCartButton } from "@/components/storefront/AddToCartButton";
 import { WishlistButton } from "@/components/storefront/WishlistButton";
+import { isUnoptimizedImage } from "@/lib/image";
 import type { ProductListItem } from "@/lib/queries/products";
 
 type ProductCardProps = {
   product: ProductListItem;
+  priority?: boolean;
 };
 
-export function ProductCard({ product }: ProductCardProps) {
+export function ProductCard({ product, priority = false }: ProductCardProps) {
   return (
     <div className="group relative flex flex-col overflow-hidden rounded-2xl border border-neutral-200 bg-white transition hover:shadow-md">
       <Link href={`/produk/${product.slug}`} className="flex flex-1 flex-col">
@@ -21,6 +23,8 @@ export function ProductCard({ product }: ProductCardProps) {
               fill
               sizes="(min-width: 1024px) 25vw, (min-width: 640px) 33vw, 50vw"
               className="object-cover transition duration-300 group-hover:scale-105"
+              priority={priority}
+              unoptimized={isUnoptimizedImage(product.imageUrl)}
             />
           ) : (
             <ImagePlaceholder />
