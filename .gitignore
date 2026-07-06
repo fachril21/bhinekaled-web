@@ -39,3 +39,6 @@ next-env.d.ts
 .vscode/*
 !.vscode/extensions.json
 .idea
+
+# planning docs (internal — jangan di-commit/expose)
+/docs/
