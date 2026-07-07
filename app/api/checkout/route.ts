@@ -1,28 +1,181 @@
 // Epic 3: Checkout Flow (Tanpa Payment Gateway)
 //
-// Route ini yang jadi satu-satunya jalur untuk membuat order baru.
-// Sengaja server-side (bukan insert langsung dari client) supaya harga &
-// stok bisa divalidasi ulang di server — customer tidak bisa memanipulasi
-// harga dari browser.
+// Route ini yang jadi satu-satunya jalur untuk membuat order baru. Sengaja
+// Route Handler (bukan Server Action) — lihat docs/ARCHITECTURE.md &
+// docs/plan/epic-3-checkout-flow.md Temuan #8.
 //
-// Alur yang perlu diimplementasikan (lihat docs/EPICS.md Epic 3 & Epic 9):
-// 1. Terima payload: guest_session_id, data pengiriman, daftar item cart
-// 2. Ambil ulang harga & stok tiap produk/varian dari database (JANGAN percaya
-//    harga yang dikirim dari client)
-// 3. Hitung subtotal + shipping_cost (flat rate placeholder — lihat PRD)
-// 4. Insert ke tabel `orders` (status default 'menunggu_konfirmasi') +
-//    `order_items` (pakai Supabase client dari lib/supabase/server.ts)
-// 5. Kosongkan cart_items untuk guest_session_id tersebut
-// 6. Trigger notifikasi ke admin (Epic 9) — non-blocking, jangan sampai
-//    kegagalan notifikasi bikin order gagal tersimpan
-// 7. Return order_number ke client untuk redirect ke halaman konfirmasi
+// Body request HANYA berisi data pengiriman (nama, no. HP, alamat, catatan)
+// — TIDAK PERNAH harga/subtotal/total. Semua angka uang dihitung ulang 100%
+// di server dari data Supabase + FLAT_SHIPPING_COST, supaya tidak ada celah
+// manipulasi harga dari client (Temuan #4a — dikonfirmasi eksplisit sebagai
+// syarat keamanan oleh user).
+//
+// Pakai admin client (service role) untuk seluruh mutasi di handler ini:
+// RLS publik pada products/product_variants hanya mengizinkan SELECT produk
+// aktif (bukan UPDATE stok), dan RLS pada orders/order_items hanya
+// mengizinkan INSERT publik (tidak ada policy DELETE untuk compensating
+// rollback). Proteksi endpoint ini sepenuhnya ada di application layer di
+// bawah (origin check, Zod, revalidasi harga/stok server-side), bukan RLS.
 
 import { NextRequest, NextResponse } from "next/server";
+import { readGuestSessionId } from "@/lib/guest-session";
+import { checkoutFormSchema } from "@/lib/validations";
+import { getCartItems } from "@/lib/queries/cart";
+import { createAdminClient } from "@/lib/supabase/admin";
+import {
+  decrementStockForCheckout,
+  restoreStockForCheckout,
+  type StockGuardTarget,
+} from "@/lib/checkout/stock-guard";
+import { FLAT_SHIPPING_COST } from "@/lib/checkout-config";
+import { notifyAdminNewOrder } from "@/lib/notifications/admin-order-notifier";
+
+const GENERIC_SAVE_ERROR = "Gagal membuat pesanan, coba lagi.";
+
+/**
+ * Route Handler tidak dapat proteksi CSRF bawaan yang otomatis didapat
+ * Server Action (lihat docs/plan/epic-3-checkout-flow.md Temuan #7). Ini
+ * mitigasi ringan (defense-in-depth), bukan proteksi keamanan kuat —
+ * header Origin/Referer bisa dipalsukan non-browser client.
+ */
+function isSameOriginRequest(request: NextRequest): boolean {
+  const ownOrigin = request.nextUrl.origin;
+
+  const origin = request.headers.get("origin");
+  if (origin) return origin === ownOrigin;
+
+  const referer = request.headers.get("referer");
+  if (referer) {
+    try {
+      return new URL(referer).origin === ownOrigin;
+    } catch {
+      return false;
+    }
+  }
+
+  return true; // tidak ada header sama sekali — biarkan lolos, lihat catatan di atas
+}
 
 export async function POST(request: NextRequest) {
-  // TODO: implementasi sesuai acceptance criteria Epic 3 di docs/EPICS.md
-  return NextResponse.json(
-    { message: "Belum diimplementasikan — lihat docs/EPICS.md Epic 3" },
-    { status: 501 }
+  if (!isSameOriginRequest(request)) {
+    return NextResponse.json({ error: "Permintaan ditolak." }, { status: 403 });
+  }
+
+  const guestSessionId = await readGuestSessionId();
+  if (!guestSessionId) {
+    return NextResponse.json({ error: "Keranjang Anda kosong." }, { status: 400 });
+  }
+
+  let body: unknown;
+  try {
+    body = await request.json();
+  } catch {
+    return NextResponse.json({ error: "Data tidak valid." }, { status: 400 });
+  }
+
+  const parsed = checkoutFormSchema.safeParse(body);
+  if (!parsed.success) {
+    return NextResponse.json(
+      {
+        error: "Data pengiriman belum lengkap/valid.",
+        fieldErrors: parsed.error.flatten().fieldErrors,
+      },
+      { status: 400 }
+    );
+  }
+  const { customer_name, customer_phone, shipping_address, notes } = parsed.data;
+
+  let cart;
+  try {
+    cart = await getCartItems(guestSessionId);
+  } catch {
+    return NextResponse.json({ error: "Gagal memuat keranjang, coba lagi." }, { status: 500 });
+  }
+
+  const available = cart.items.filter((item) => item.productIsAvailable);
+  if (available.length === 0) {
+    return NextResponse.json({ error: "Tidak ada produk yang bisa di-checkout." }, { status: 400 });
+  }
+
+  // Pre-check cepat (belum menulis apapun) — fast path untuk kasus umum
+  // tanpa perubahan konkuren. Pemeriksaan otoritatif tetap
+  // decrementStockForCheckout di bawah (aman dari race condition).
+  const insufficient = available.filter((item) => item.qty > item.availableStock);
+  if (insufficient.length > 0) {
+    return NextResponse.json(
+      { error: `Stok tidak mencukupi untuk: ${insufficient.map((item) => item.productName).join(", ")}` },
+      { status: 400 }
+    );
+  }
+
+  const subtotal = available.reduce((sum, item) => sum + item.lineSubtotal, 0);
+  const shippingCost = FLAT_SHIPPING_COST;
+  const total = subtotal + shippingCost;
+
+  const supabase = createAdminClient();
+
+  const stockTargets: StockGuardTarget[] = available.map((item) => ({
+    table: item.variantId ? "product_variants" : "products",
+    id: item.variantId ?? item.productId,
+    qty: item.qty,
+    productName: item.productName,
+  }));
+
+  const stockResult = await decrementStockForCheckout(supabase, stockTargets);
+  if (!stockResult.success) {
+    return NextResponse.json(
+      {
+        error: `Stok tidak mencukupi untuk: ${stockResult.failures.map((f) => f.productName).join(", ")}`,
+      },
+      { status: 400 }
+    );
+  }
+
+  const { data: order, error: orderError } = await supabase
+    .from("orders")
+    .insert({
+      guest_session_id: guestSessionId,
+      customer_name,
+      customer_phone,
+      shipping_address,
+      notes: notes || null,
+      subtotal,
+      shipping_cost: shippingCost,
+      total,
+    })
+    .select("id, order_number")
+    .single();
+
+  if (orderError || !order) {
+    await restoreStockForCheckout(supabase, stockTargets);
+    return NextResponse.json({ error: GENERIC_SAVE_ERROR }, { status: 500 });
+  }
+
+  const orderItemsPayload = available.map((item) => ({
+    order_id: order.id,
+    product_id: item.productId,
+    variant_id: item.variantId,
+    product_name_snapshot: item.productName,
+    variant_name_snapshot: item.variantName,
+    price_snapshot: item.unitPrice,
+    qty: item.qty,
+    subtotal: item.lineSubtotal,
+  }));
+
+  const { error: itemsError } = await supabase.from("order_items").insert(orderItemsPayload);
+  if (itemsError) {
+    await supabase.from("orders").delete().eq("id", order.id);
+    await restoreStockForCheckout(supabase, stockTargets);
+    return NextResponse.json({ error: GENERIC_SAVE_ERROR }, { status: 500 });
+  }
+
+  await supabase.from("cart_items").delete().eq("guest_session_id", guestSessionId);
+
+  notifyAdminNewOrder({ orderNumber: order.order_number, customerName: customer_name, total }).catch(
+    () => {
+      // non-blocking — kegagalan notifikasi tidak boleh mempengaruhi response checkout
+    }
   );
+
+  return NextResponse.json({ orderNumber: order.order_number }, { status: 200 });
 }

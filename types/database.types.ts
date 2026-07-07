@@ -18,6 +18,8 @@ export type Json =
   | Json[];
 
 export type ProductStatus = "draft" | "active" | "archived";
+export type OrderStatus = "menunggu_konfirmasi" | "diproses" | "dikirim" | "selesai" | "dibatalkan";
+export type PaymentStatus = "n/a" | "unpaid" | "paid";
 
 export type Database = {
   public: {
@@ -265,6 +267,121 @@ export type Database = {
             columns: ["product_id"];
             isOneToOne: false;
             referencedRelation: "products";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      orders: {
+        Row: {
+          id: string;
+          order_number: string;
+          guest_session_id: string | null;
+          customer_name: string;
+          customer_phone: string;
+          shipping_address: string;
+          notes: string | null;
+          subtotal: number;
+          shipping_cost: number;
+          total: number;
+          status: OrderStatus;
+          payment_method: string | null;
+          payment_status: PaymentStatus;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          order_number?: string;
+          guest_session_id?: string | null;
+          customer_name: string;
+          customer_phone: string;
+          shipping_address: string;
+          notes?: string | null;
+          subtotal?: number;
+          shipping_cost?: number;
+          total?: number;
+          status?: OrderStatus;
+          payment_method?: string | null;
+          payment_status?: PaymentStatus;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          order_number?: string;
+          guest_session_id?: string | null;
+          customer_name?: string;
+          customer_phone?: string;
+          shipping_address?: string;
+          notes?: string | null;
+          subtotal?: number;
+          shipping_cost?: number;
+          total?: number;
+          status?: OrderStatus;
+          payment_method?: string | null;
+          payment_status?: PaymentStatus;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+      order_items: {
+        Row: {
+          id: string;
+          order_id: string;
+          product_id: string | null;
+          variant_id: string | null;
+          product_name_snapshot: string;
+          variant_name_snapshot: string | null;
+          price_snapshot: number;
+          qty: number;
+          subtotal: number;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          order_id: string;
+          product_id?: string | null;
+          variant_id?: string | null;
+          product_name_snapshot: string;
+          variant_name_snapshot?: string | null;
+          price_snapshot: number;
+          qty: number;
+          subtotal: number;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          order_id?: string;
+          product_id?: string | null;
+          variant_id?: string | null;
+          product_name_snapshot?: string;
+          variant_name_snapshot?: string | null;
+          price_snapshot?: number;
+          qty?: number;
+          subtotal?: number;
+          created_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "order_items_order_id_fkey";
+            columns: ["order_id"];
+            isOneToOne: false;
+            referencedRelation: "orders";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "order_items_product_id_fkey";
+            columns: ["product_id"];
+            isOneToOne: false;
+            referencedRelation: "products";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "order_items_variant_id_fkey";
+            columns: ["variant_id"];
+            isOneToOne: false;
+            referencedRelation: "product_variants";
             referencedColumns: ["id"];
           },
         ];
