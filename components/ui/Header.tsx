@@ -4,9 +4,11 @@ import type { CategorySummary } from "@/lib/queries/categories";
 
 type HeaderProps = {
   categories: CategorySummary[];
+  cartCount?: number;
+  wishlistCount?: number;
 };
 
-export function Header({ categories }: HeaderProps) {
+export function Header({ categories, cartCount = 0, wishlistCount = 0 }: HeaderProps) {
   return (
     <header className="sticky top-0 z-40 border-b border-neutral-200 bg-white">
       <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-3 px-4 py-3 sm:gap-4">
@@ -31,15 +33,25 @@ export function Header({ categories }: HeaderProps) {
               {category.name}
             </Link>
           ))}
-          <Link href="/wishlist" aria-label="Wishlist" className="hover:text-brand-red">
+          <Link href="/wishlist" aria-label="Wishlist" className="relative hover:text-brand-red">
             <HeartIcon />
+            {wishlistCount > 0 && <CountBadge count={wishlistCount} />}
           </Link>
-          <Link href="/cart" aria-label="Keranjang belanja" className="hover:text-brand-red">
+          <Link href="/cart" aria-label="Keranjang belanja" className="relative hover:text-brand-red">
             <CartIcon />
+            {cartCount > 0 && <CountBadge count={cartCount} />}
           </Link>
         </nav>
       </div>
     </header>
+  );
+}
+
+function CountBadge({ count }: { count: number }) {
+  return (
+    <span className="absolute -right-2 -top-2 flex h-4 min-w-4 items-center justify-center rounded-full bg-brand-red px-1 text-[10px] font-bold text-white">
+      {count > 99 ? "99+" : count}
+    </span>
   );
 }
 

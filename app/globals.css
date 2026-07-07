@@ -16,11 +16,12 @@
   --color-brand-neutral: var(--brand-neutral);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* Desain BHINEKALED hanya punya satu tema (light) — lihat docs/screen/.
+   color-scheme: light memastikan kontrol native (select, input) ikut
+   render terang, supaya tidak ada teks yang mewarisi warna dark-mode
+   OS/browser di atas background putih komponen produk. */
+:root {
+  color-scheme: light;
 }
 
 body {

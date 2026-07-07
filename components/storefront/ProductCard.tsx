@@ -8,10 +8,11 @@ import type { ProductListItem } from "@/lib/queries/products";
 
 type ProductCardProps = {
   product: ProductListItem;
+  isWishlisted: boolean;
   priority?: boolean;
 };
 
-export function ProductCard({ product, priority = false }: ProductCardProps) {
+export function ProductCard({ product, isWishlisted, priority = false }: ProductCardProps) {
   return (
     <div className="group relative flex flex-col overflow-hidden rounded-2xl border border-neutral-200 bg-white transition hover:shadow-md">
       <Link href={`/produk/${product.slug}`} className="flex flex-1 flex-col">
@@ -52,11 +53,20 @@ export function ProductCard({ product, priority = false }: ProductCardProps) {
       </Link>
 
       <div className="absolute right-2 top-2 z-10">
-        <WishlistButton />
+        <WishlistButton productId={product.id} initialIsWishlisted={isWishlisted} />
       </div>
 
       <div className="px-3 pb-3">
-        <AddToCartButton disabled={!product.inStock} />
+        {product.hasVariants ? (
+          <Link
+            href={`/produk/${product.slug}`}
+            className="block w-full rounded-full border border-brand-red px-4 py-2 text-center text-sm font-semibold text-brand-red transition hover:bg-brand-red hover:text-white"
+          >
+            Pilih Varian
+          </Link>
+        ) : (
+          <AddToCartButton productId={product.id} variantId={null} disabled={!product.inStock} />
+        )}
       </div>
     </div>
   );

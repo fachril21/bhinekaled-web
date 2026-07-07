@@ -4,6 +4,7 @@ import { EmptyState } from "@/components/storefront/EmptyState";
 
 type ProductGridProps = {
   products: ProductListItem[];
+  wishlistedProductIds?: Set<string>;
   emptyMessage?: string;
   emptyActionHref?: string;
   emptyActionLabel?: string;
@@ -11,6 +12,7 @@ type ProductGridProps = {
 
 export function ProductGrid({
   products,
+  wishlistedProductIds = new Set(),
   emptyMessage = "Belum ada produk tersedia.",
   emptyActionHref,
   emptyActionLabel,
@@ -24,7 +26,12 @@ export function ProductGrid({
   return (
     <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
       {products.map((product, index) => (
-        <ProductCard key={product.id} product={product} priority={index < 4} />
+        <ProductCard
+          key={product.id}
+          product={product}
+          isWishlisted={wishlistedProductIds.has(product.id)}
+          priority={index < 4}
+        />
       ))}
     </div>
   );

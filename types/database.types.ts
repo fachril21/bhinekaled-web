@@ -4,9 +4,9 @@
 //   npx supabase gen types typescript --project-id <project-id> > types/database.types.ts
 //
 // Struktur di bawah ini ditulis manual mengikuti docs/schema.sql persis (kolom,
-// nullability, default value) — hanya mencakup tabel yang dipakai Epic 1
-// (categories, products, product_images, product_variants). Tabel lain
-// (orders, cart_items, wishlist_items, order_items, admin_profiles) masih
+// nullability, default value) — mencakup tabel yang dipakai Epic 1 (categories,
+// products, product_images, product_variants) & Epic 2 (cart_items,
+// wishlist_items). Tabel lain (orders, order_items, admin_profiles) masih
 // stub kosong sampai epic yang membutuhkannya dikerjakan.
 
 export type Json =
@@ -188,6 +188,80 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "product_variants_product_id_fkey";
+            columns: ["product_id"];
+            isOneToOne: false;
+            referencedRelation: "products";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      cart_items: {
+        Row: {
+          id: string;
+          guest_session_id: string;
+          product_id: string;
+          variant_id: string | null;
+          qty: number;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          guest_session_id: string;
+          product_id: string;
+          variant_id?: string | null;
+          qty?: number;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          guest_session_id?: string;
+          product_id?: string;
+          variant_id?: string | null;
+          qty?: number;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "cart_items_product_id_fkey";
+            columns: ["product_id"];
+            isOneToOne: false;
+            referencedRelation: "products";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "cart_items_variant_id_fkey";
+            columns: ["variant_id"];
+            isOneToOne: false;
+            referencedRelation: "product_variants";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      wishlist_items: {
+        Row: {
+          id: string;
+          guest_session_id: string;
+          product_id: string;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          guest_session_id: string;
+          product_id: string;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          guest_session_id?: string;
+          product_id?: string;
+          created_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "wishlist_items_product_id_fkey";
             columns: ["product_id"];
             isOneToOne: false;
             referencedRelation: "products";

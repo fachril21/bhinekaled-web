@@ -2,11 +2,15 @@ import Link from "next/link";
 import { ProductGrid } from "@/components/storefront/ProductGrid";
 import { getNewestProducts } from "@/lib/queries/products";
 import { getTopLevelCategoriesWithActiveProducts } from "@/lib/queries/categories";
+import { readGuestSessionId } from "@/lib/guest-session";
+import { getWishlistedProductIds } from "@/lib/queries/wishlist";
 import type { ProductListItem } from "@/lib/queries/products";
 import type { CategorySummary } from "@/lib/queries/categories";
 
-// Homepage tidak baca searchParams/cookies, jadi aman di-ISR (lihat
-// docs/plan/epic-1-landing-katalog-produk.md bagian 9).
+// Homepage sekarang membaca cookies (guest session untuk wishlist state),
+// jadi tetap dynamic per request — `revalidate` di bawah tidak lagi berefek
+// (sudah dicatat sebagai temuan serupa di Epic 1 bagian 12 untuk cookies()
+// di lib/supabase/server.ts).
 export const revalidate = 60;
 
 const FEATURED_CATEGORY_LIMIT = 6;
@@ -15,9 +19,10 @@ const NEWEST_PRODUCT_LIMIT = 8;
 const TRUST_POINTS = ["Garansi Resmi", "Plug & Play", "Pengiriman Nationwide", "Kualitas Teruji"];
 
 export default async function HomePage() {
-  const [categoriesResult, productsResult] = await Promise.all([
+  const [categoriesResult, productsResult, wishlistedProductIds] = await Promise.all([
     fetchFeaturedCategories(),
     fetchNewestProducts(),
+    fetchWishlistedProductIds(),
   ]);
 
   return (
@@ -45,6 +50,7 @@ export default async function HomePage() {
         </div>
         <ProductGrid
           products={productsResult.data}
+          wishlistedProductIds={wishlistedProductIds}
           emptyMessage={
             productsResult.failed
               ? "Gagal memuat produk, coba muat ulang halaman."
@@ -69,6 +75,17 @@ async function fetchNewestProducts(): Promise<{ data: ProductListItem[]; failed:
     return { data: await getNewestProducts(NEWEST_PRODUCT_LIMIT), failed: false };
   } catch {
     return { data: [], failed: true };
+  }
+}
+
+async function fetchWishlistedProductIds(): Promise<Set<string>> {
+  const guestSessionId = await readGuestSessionId();
+  if (!guestSessionId) return new Set();
+
+  try {
+    return await getWishlistedProductIds(guestSessionId);
+  } catch {
+    return new Set();
   }
 }
 

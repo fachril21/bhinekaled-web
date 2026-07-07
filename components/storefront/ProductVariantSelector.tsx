@@ -7,14 +7,22 @@ import { WishlistButton } from "@/components/storefront/WishlistButton";
 import type { ProductVariant } from "@/lib/queries/products";
 
 type ProductVariantSelectorProps = {
+  productId: string;
   variants: ProductVariant[];
   basePrice: number;
   baseStock: number;
+  isWishlisted: boolean;
 };
 
 // Logika harga/stok mengikuti komentar docs/schema.sql: products.stock hanya
 // dipakai kalau produk TIDAK punya varian. Lihat docs/plan bagian 6.
-export function ProductVariantSelector({ variants, basePrice, baseStock }: ProductVariantSelectorProps) {
+export function ProductVariantSelector({
+  productId,
+  variants,
+  basePrice,
+  baseStock,
+  isWishlisted,
+}: ProductVariantSelectorProps) {
   const hasVariants = variants.length > 0;
 
   const defaultVariant = useMemo(() => {
@@ -114,9 +122,14 @@ export function ProductVariantSelector({ variants, basePrice, baseStock }: Produ
 
       <div className="flex items-center gap-3">
         <div className="flex-1">
-          <AddToCartButton disabled={isOutOfStock} />
+          <AddToCartButton
+            productId={productId}
+            variantId={selectedVariant?.id ?? null}
+            quantity={quantity}
+            disabled={isOutOfStock}
+          />
         </div>
-        <WishlistButton />
+        <WishlistButton productId={productId} initialIsWishlisted={isWishlisted} />
       </div>
     </div>
   );

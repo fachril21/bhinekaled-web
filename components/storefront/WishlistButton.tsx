@@ -1,46 +1,66 @@
 "use client";
 
-import { useState } from "react";
+import { useActionState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { toggleWishlistItemForm, type WishlistActionResult } from "@/lib/actions/wishlist";
 
-// TODO Epic 2: sambungkan ke wishlist_items (guest_session_id). Placeholder
-// UI-only di Epic 1 — tidak ada state persist, hanya notice sesaat.
-export function WishlistButton() {
-  const [showNotice, setShowNotice] = useState(false);
+type WishlistButtonProps = {
+  productId: string;
+  initialIsWishlisted: boolean;
+};
 
-  function handleClick() {
-    setShowNotice(true);
-    window.setTimeout(() => setShowNotice(false), 2000);
-  }
+const initialState: WishlistActionResult | null = null;
+
+// State akhir SELALU diambil dari response server (bukan optimistic lokal)
+// — lihat docs/plan/epic-2-cart-wishlist.md Temuan #6 & keputusan bagian 9.
+export function WishlistButton({ productId, initialIsWishlisted }: WishlistButtonProps) {
+  const router = useRouter();
+  const boundAction = toggleWishlistItemForm.bind(null, productId);
+  const [state, formAction, isPending] = useActionState(boundAction, initialState);
+
+  const isWishlisted = state?.success ? state.isWishlisted : initialIsWishlisted;
+  const errorMessage = state && !state.success ? state.error : null;
+
+  useEffect(() => {
+    if (state?.success) {
+      router.refresh();
+    }
+  }, [state, router]);
 
   return (
     <div className="relative">
-      <button
-        type="button"
-        onClick={handleClick}
-        aria-label="Simpan ke wishlist"
-        className="flex h-9 w-9 items-center justify-center rounded-full border border-neutral-200 bg-white/90 text-neutral-500 shadow-sm hover:text-brand-red"
-      >
-        <HeartIcon />
-      </button>
-      {showNotice && (
+      <form action={formAction}>
+        <button
+          type="submit"
+          disabled={isPending}
+          aria-label={isWishlisted ? "Hapus dari wishlist" : "Simpan ke wishlist"}
+          aria-pressed={isWishlisted}
+          className={`flex h-9 w-9 items-center justify-center rounded-full border border-neutral-200 bg-white/90 shadow-sm transition ${
+            isWishlisted ? "text-brand-red" : "text-neutral-500 hover:text-brand-red"
+          }`}
+        >
+          <HeartIcon filled={isWishlisted} />
+        </button>
+      </form>
+      {errorMessage && (
         <p
           role="status"
           className="absolute right-0 top-full mt-1 w-max rounded bg-neutral-900 px-2 py-1 text-xs text-white"
         >
-          Segera hadir
+          {errorMessage}
         </p>
       )}
     </div>
   );
 }
 
-function HeartIcon() {
+function HeartIcon({ filled }: { filled: boolean }) {
   return (
     <svg
       width="18"
       height="18"
       viewBox="0 0 24 24"
-      fill="none"
+      fill={filled ? "currentColor" : "none"}
       stroke="currentColor"
       strokeWidth="2"
       aria-hidden="true"

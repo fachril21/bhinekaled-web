@@ -14,6 +14,8 @@ import {
 import { ProductTabs } from "@/components/storefront/ProductTabs";
 import { ProductGrid } from "@/components/storefront/ProductGrid";
 import { getProductBySlug, getRelatedProducts } from "@/lib/queries/products";
+import { readGuestSessionId } from "@/lib/guest-session";
+import { getWishlistedProductIds } from "@/lib/queries/wishlist";
 
 // ISR 60 detik — halaman ini tidak baca searchParams, jadi bisa di-ISR
 // (lihat docs/plan/epic-1-landing-katalog-produk.md bagian 9).
@@ -50,7 +52,10 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
   const product = await getProductBySlug(slug);
   if (!product) notFound();
 
-  const relatedProducts = await fetchRelatedProducts(product.categoryId, product.id);
+  const [relatedProducts, wishlistedProductIds] = await Promise.all([
+    fetchRelatedProducts(product.categoryId, product.id),
+    fetchWishlistedProductIds(),
+  ]);
   const specEntries = getSpecificationEntries(product.specifications);
   const vehicleTags = getVehicleCompatibilityLabels(product.vehicleCompatibility);
 
@@ -79,9 +84,11 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
 
           <div className="mt-4">
             <ProductVariantSelector
+              productId={product.id}
               variants={product.variants}
               basePrice={product.basePrice}
               baseStock={product.stock}
+              isWishlisted={wishlistedProductIds.has(product.id)}
             />
           </div>
         </div>
@@ -128,7 +135,7 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
       {relatedProducts.length > 0 && (
         <div className="mt-16">
           <h2 className="mb-6 text-xl font-bold text-neutral-900">Produk Sejenis</h2>
-          <ProductGrid products={relatedProducts} />
+          <ProductGrid products={relatedProducts} wishlistedProductIds={wishlistedProductIds} />
         </div>
       )}
     </div>
@@ -140,5 +147,16 @@ async function fetchRelatedProducts(categoryId: string | null, excludeProductId:
     return await getRelatedProducts(categoryId, excludeProductId, RELATED_PRODUCT_LIMIT);
   } catch {
     return [];
+  }
+}
+
+async function fetchWishlistedProductIds(): Promise<Set<string>> {
+  const guestSessionId = await readGuestSessionId();
+  if (!guestSessionId) return new Set();
+
+  try {
+    return await getWishlistedProductIds(guestSessionId);
+  } catch {
+    return new Set();
   }
 }

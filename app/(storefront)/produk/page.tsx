@@ -6,6 +6,8 @@ import { ProductPagination } from "@/components/storefront/ProductPagination";
 import { getProductList, PRODUCT_PAGE_SIZE } from "@/lib/queries/products";
 import { getCategoriesWithActiveProductCount } from "@/lib/queries/categories";
 import { parseProductListParams, type RawSearchParams } from "@/lib/url-params";
+import { readGuestSessionId } from "@/lib/guest-session";
+import { getWishlistedProductIds } from "@/lib/queries/wishlist";
 import type { ProductListResult, ProductListParams } from "@/lib/queries/products";
 import type { CategorySummary } from "@/lib/queries/categories";
 
@@ -24,9 +26,10 @@ export default async function ProdukPage({ searchParams }: ProdukPageProps) {
   const rawParams = await searchParams;
   const params = parseProductListParams(rawParams);
 
-  const [productsResult, categoriesResult] = await Promise.all([
+  const [productsResult, categoriesResult, wishlistedProductIds] = await Promise.all([
     fetchProductList(params),
     fetchCategories(),
+    fetchWishlistedProductIds(),
   ]);
 
   const hasActiveFilter = Boolean(
@@ -57,6 +60,7 @@ export default async function ProdukPage({ searchParams }: ProdukPageProps) {
         <div>
           <ProductGrid
             products={productsResult.data.products}
+            wishlistedProductIds={wishlistedProductIds}
             emptyMessage={emptyMessage}
             emptyActionHref={hasActiveFilter ? "/produk" : undefined}
             emptyActionLabel={hasActiveFilter ? "Reset filter" : undefined}
@@ -90,6 +94,17 @@ async function fetchCategories(): Promise<{ data: CategorySummary[]; failed: boo
     return { data: await getCategoriesWithActiveProductCount(), failed: false };
   } catch {
     return { data: [], failed: true };
+  }
+}
+
+async function fetchWishlistedProductIds(): Promise<Set<string>> {
+  const guestSessionId = await readGuestSessionId();
+  if (!guestSessionId) return new Set();
+
+  try {
+    return await getWishlistedProductIds(guestSessionId);
+  } catch {
+    return new Set();
   }
 }
 

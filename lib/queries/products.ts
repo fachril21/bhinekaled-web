@@ -26,6 +26,7 @@ export type ProductListItem = {
   imageAlt: string | null;
   isNew: boolean;
   inStock: boolean;
+  hasVariants: boolean;
   createdAt: string;
 };
 
@@ -127,6 +128,7 @@ function mapListRow(row: ListRow): ProductListItem {
     imageAlt: primaryImage?.alt_text ?? null,
     isNew: isProductNew(row.created_at),
     inStock,
+    hasVariants,
     createdAt: row.created_at,
   };
 }

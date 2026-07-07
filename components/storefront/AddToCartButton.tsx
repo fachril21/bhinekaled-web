@@ -1,36 +1,51 @@
 "use client";
 
-import { useState } from "react";
+import { useActionState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { addCartItemForm, type CartActionResult } from "@/lib/actions/cart";
 
 type AddToCartButtonProps = {
+  productId: string;
+  variantId: string | null;
+  quantity?: number;
   disabled?: boolean;
 };
 
-// TODO Epic 2: sambungkan ke cart_items (insert berdasarkan guest_session_id).
-// Di Epic 1 tombol ini murni placeholder UI — tidak menulis apapun ke
-// Supabase, hanya menampilkan notice singkat saat diklik supaya tidak
-// terlihat seperti tombol mati/rusak (lihat docs/plan bagian 6).
-export function AddToCartButton({ disabled = false }: AddToCartButtonProps) {
-  const [showNotice, setShowNotice] = useState(false);
+const initialState: CartActionResult | null = null;
 
-  function handleClick() {
-    setShowNotice(true);
-    window.setTimeout(() => setShowNotice(false), 2000);
-  }
+export function AddToCartButton({
+  productId,
+  variantId,
+  quantity = 1,
+  disabled = false,
+}: AddToCartButtonProps) {
+  const router = useRouter();
+  const boundAction = addCartItemForm.bind(null, productId, variantId, quantity);
+  const [state, formAction, isPending] = useActionState(boundAction, initialState);
+
+  useEffect(() => {
+    if (state?.success) {
+      router.refresh();
+    }
+  }, [state, router]);
 
   return (
     <div>
-      <button
-        type="button"
-        disabled={disabled}
-        onClick={handleClick}
-        className="w-full rounded-full bg-brand-red px-4 py-2 text-sm font-semibold text-white transition hover:bg-red-700 disabled:cursor-not-allowed disabled:bg-neutral-300"
-      >
-        {disabled ? "Stok Habis" : "+ Keranjang"}
-      </button>
-      {showNotice && (
-        <p role="status" className="mt-1 text-center text-xs text-neutral-500">
-          Fitur keranjang segera hadir.
+      <form action={formAction}>
+        <button
+          type="submit"
+          disabled={disabled || isPending}
+          className="w-full rounded-full bg-brand-red px-4 py-2 text-sm font-semibold text-white transition hover:bg-red-700 disabled:cursor-not-allowed disabled:bg-neutral-300"
+        >
+          {disabled ? "Stok Habis" : isPending ? "Menambahkan..." : "+ Keranjang"}
+        </button>
+      </form>
+      {state && (
+        <p
+          role="status"
+          className={`mt-1 text-center text-xs ${state.success ? "text-green-600" : "text-red-600"}`}
+        >
+          {state.success ? "Ditambahkan ke keranjang" : state.error}
         </p>
       )}
     </div>
