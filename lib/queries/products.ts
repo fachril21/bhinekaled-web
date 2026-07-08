@@ -106,7 +106,7 @@ function isProductNew(createdAt: string): boolean {
 }
 
 /** Escape wildcard ILIKE (`%`, `_`) supaya input customer tidak berlaku sebagai wildcard SQL. */
-function escapeIlikePattern(value: string): string {
+export function escapeIlikePattern(value: string): string {
   return value.replace(/[\\%_]/g, (match) => `\\${match}`);
 }
 

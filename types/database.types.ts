@@ -20,6 +20,7 @@ export type Json =
 export type ProductStatus = "draft" | "active" | "archived";
 export type OrderStatus = "menunggu_konfirmasi" | "diproses" | "dikirim" | "selesai" | "dibatalkan";
 export type PaymentStatus = "n/a" | "unpaid" | "paid";
+export type AdminRole = "admin" | "superadmin";
 
 export type Database = {
   public: {
@@ -385,6 +386,27 @@ export type Database = {
             referencedColumns: ["id"];
           },
         ];
+      };
+      admin_profiles: {
+        Row: {
+          id: string;
+          full_name: string | null;
+          role: AdminRole;
+          created_at: string;
+        };
+        Insert: {
+          id: string;
+          full_name?: string | null;
+          role?: AdminRole;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          full_name?: string | null;
+          role?: AdminRole;
+          created_at?: string;
+        };
+        Relationships: [];
       };
     };
     Views: Record<string, never>;

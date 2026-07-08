@@ -1,20 +1,28 @@
 // Epic 4: Admin Auth & Dashboard Shell
+// Lihat docs/plan/epic-4-admin-auth-dashboard-shell.md bagian 5.2.
 //
-// TODO: cek session Supabase Auth di sini. Kalau belum login atau bukan admin
-// (tidak ada row di tabel `admin_profiles`), redirect ke /admin/login.
-// Lihat docs/schema.sql untuk struktur tabel admin_profiles & function is_admin().
+// Satu-satunya titik proteksi terpusat untuk semua route di bawah
+// app/admin/(protected)/ — route group ini TIDAK mengubah URL (tetap
+// /admin, /admin/produk, dst), hanya memisahkan subtree yang dibungkus
+// auth check dari app/admin/login yang sengaja di luar grup ini
+// (lihat Temuan #1 plan tsb untuk kenapa).
 
-export default function AdminLayout({
+import { redirect } from "next/navigation";
+import { getAdminSession } from "@/lib/auth/admin-session";
+import { AdminHeader } from "@/components/admin/AdminHeader";
+
+export default async function AdminLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const session = await getAdminSession();
+  if (!session) redirect("/admin/login");
+
   return (
     <div className="min-h-screen bg-neutral-50">
-      <header className="border-b bg-white px-6 py-4">
-        <p className="font-semibold text-[#E6212A]">Bhinekaled — Admin</p>
-      </header>
-      <div className="p-6">{children}</div>
+      <AdminHeader admin={session} />
+      <div className="mx-auto max-w-5xl p-6">{children}</div>
     </div>
   );
 }
