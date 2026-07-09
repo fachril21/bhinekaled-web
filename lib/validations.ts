@@ -72,3 +72,10 @@ export const productFormSchema = z.object({
   deletedVariantIds: z.array(z.string().uuid()).default([]),
 });
 export type ProductFormValues = z.infer<typeof productFormSchema>;
+
+// Epic 7: Admin Kelola Order
+export const orderStatusUpdateSchema = z.object({
+  orderId: z.string().uuid(),
+  status: z.enum(["menunggu_konfirmasi", "diproses", "dikirim", "selesai", "dibatalkan"]),
+});
+export type OrderStatusUpdateValues = z.infer<typeof orderStatusUpdateSchema>;
