@@ -14,6 +14,7 @@ const NAV_LINKS = [
   { href: "/admin/produk", label: "Produk" },
   { href: "/admin/kategori", label: "Kategori" },
   { href: "/admin/order", label: "Order" },
+  { href: "/admin/biaya", label: "Biaya Lainnya" },
 ];
 
 export function AdminHeader({ admin }: AdminHeaderProps) {

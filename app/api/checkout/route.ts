@@ -29,6 +29,8 @@ import {
 } from "@/lib/checkout/stock-guard";
 import { FLAT_SHIPPING_COST } from "@/lib/checkout-config";
 import { notifyAdminNewOrder } from "@/lib/notifications/admin-order-notifier";
+import { calculateFees, sumFees, type CalculatedFee } from "@/lib/fees";
+import type { FeeType } from "@/types/database.types";
 
 const GENERIC_SAVE_ERROR = "Gagal membuat pesanan, coba lagi.";
 
@@ -110,9 +112,32 @@ export async function POST(request: NextRequest) {
 
   const subtotal = available.reduce((sum, item) => sum + item.lineSubtotal, 0);
   const shippingCost = FLAT_SHIPPING_COST;
-  const total = subtotal + shippingCost;
 
   const supabase = createAdminClient();
+
+  // Epic 11: kegagalan fetch biaya lainnya TIDAK PERNAH membatalkan checkout
+  // — treat sebagai "tidak ada biaya aktif" (lihat plan Temuan #2).
+  let calculatedFees: CalculatedFee[] = [];
+  try {
+    const { data: feeRows, error: feesError } = await supabase
+      .from("additional_fees")
+      .select("id, label, fee_type, amount")
+      .eq("is_active", true);
+    if (feesError) throw feesError;
+    calculatedFees = calculateFees(
+      (feeRows ?? []).map((row) => ({
+        id: row.id,
+        label: row.label,
+        feeType: row.fee_type as FeeType,
+        amount: row.amount,
+      })),
+      subtotal
+    );
+  } catch {
+    calculatedFees = [];
+  }
+
+  const total = subtotal + shippingCost + sumFees(calculatedFees);
 
   const stockTargets: StockGuardTarget[] = available.map((item) => ({
     table: item.variantId ? "product_variants" : "products",
@@ -167,6 +192,24 @@ export async function POST(request: NextRequest) {
     await supabase.from("orders").delete().eq("id", order.id);
     await restoreStockForCheckout(supabase, stockTargets);
     return NextResponse.json({ error: GENERIC_SAVE_ERROR }, { status: 500 });
+  }
+
+  if (calculatedFees.length > 0) {
+    const orderFeesPayload = calculatedFees.map((fee) => ({
+      order_id: order.id,
+      fee_id: fee.feeId,
+      label_snapshot: fee.label,
+      fee_type_snapshot: fee.feeType,
+      rate_snapshot: fee.rate,
+      amount: fee.amount,
+    }));
+
+    const { error: feesInsertError } = await supabase.from("order_fees").insert(orderFeesPayload);
+    if (feesInsertError) {
+      await supabase.from("orders").delete().eq("id", order.id); // cascade hapus order_items juga
+      await restoreStockForCheckout(supabase, stockTargets);
+      return NextResponse.json({ error: GENERIC_SAVE_ERROR }, { status: 500 });
+    }
   }
 
   await supabase.from("cart_items").delete().eq("guest_session_id", guestSessionId);

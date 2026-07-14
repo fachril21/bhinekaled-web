@@ -79,3 +79,17 @@ export const orderStatusUpdateSchema = z.object({
   status: z.enum(["menunggu_konfirmasi", "diproses", "dikirim", "selesai", "dibatalkan"]),
 });
 export type OrderStatusUpdateValues = z.infer<typeof orderStatusUpdateSchema>;
+
+// Epic 11: Admin Pengaturan Biaya Lainnya
+export const additionalFeeFormSchema = z
+  .object({
+    label: z.string().trim().min(1, "Label wajib diisi"),
+    feeType: z.enum(["flat", "percentage"]),
+    amount: z.number().positive("Nilai harus lebih dari 0"),
+    isActive: z.boolean(),
+  })
+  .refine((data) => data.feeType !== "percentage" || data.amount <= 100, {
+    message: "Nilai persentase maksimal 100",
+    path: ["amount"],
+  });
+export type AdditionalFeeFormValues = z.infer<typeof additionalFeeFormSchema>;

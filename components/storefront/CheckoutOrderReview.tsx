@@ -1,14 +1,17 @@
 import { Price } from "@/components/ui/Price";
 import type { CartItemDetail } from "@/lib/queries/cart";
+import type { CalculatedFee } from "@/lib/fees";
 
 type CheckoutOrderReviewProps = {
   items: CartItemDetail[];
   subtotal: number;
   shippingCost: number;
+  fees: CalculatedFee[];
 };
 
-export function CheckoutOrderReview({ items, subtotal, shippingCost }: CheckoutOrderReviewProps) {
-  const total = subtotal + shippingCost;
+export function CheckoutOrderReview({ items, subtotal, shippingCost, fees }: CheckoutOrderReviewProps) {
+  const feesTotal = fees.reduce((sum, fee) => sum + fee.amount, 0);
+  const total = subtotal + shippingCost + feesTotal;
 
   return (
     <div className="rounded-xl border border-neutral-200 bg-neutral-50 p-5">
@@ -38,6 +41,12 @@ export function CheckoutOrderReview({ items, subtotal, shippingCost }: CheckoutO
           <span>Ongkos Kirim</span>
           <Price amount={shippingCost} />
         </div>
+        {fees.map((fee) => (
+          <div key={fee.feeId} className="flex items-center justify-between text-neutral-600">
+            <span>{fee.label}</span>
+            <Price amount={fee.amount} />
+          </div>
+        ))}
         <div className="mt-1 flex items-center justify-between text-base font-bold text-neutral-900">
           <span>Total</span>
           <Price amount={total} />

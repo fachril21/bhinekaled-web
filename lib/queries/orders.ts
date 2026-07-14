@@ -1,7 +1,7 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 import { escapeIlikePattern } from "@/lib/queries/products";
-import type { OrderStatus, PaymentStatus } from "@/types/database.types";
+import type { FeeType, OrderStatus, PaymentStatus } from "@/types/database.types";
 
 export type OrderConfirmationItem = {
   productName: string;
@@ -9,6 +9,12 @@ export type OrderConfirmationItem = {
   priceSnapshot: number;
   qty: number;
   subtotal: number;
+};
+
+export type OrderConfirmationFee = {
+  label: string;
+  feeType: FeeType;
+  amount: number;
 };
 
 export type OrderConfirmation = {
@@ -23,6 +29,7 @@ export type OrderConfirmation = {
   status: OrderStatus;
   createdAt: string;
   items: OrderConfirmationItem[];
+  fees: OrderConfirmationFee[];
 };
 
 /**
@@ -71,6 +78,19 @@ export async function getOrderByNumberForGuest(
     subtotal: row.subtotal,
   }));
 
+  const { data: feeRows, error: feesError } = await supabase
+    .from("order_fees")
+    .select("label_snapshot, fee_type_snapshot, amount")
+    .eq("order_id", order.id)
+    .order("created_at", { ascending: true });
+  if (feesError) throw feesError;
+
+  const fees: OrderConfirmationFee[] = (feeRows ?? []).map((row) => ({
+    label: row.label_snapshot,
+    feeType: row.fee_type_snapshot,
+    amount: row.amount,
+  }));
+
   return {
     orderNumber: order.order_number,
     customerName: order.customer_name,
@@ -83,6 +103,7 @@ export async function getOrderByNumberForGuest(
     status: order.status,
     createdAt: order.created_at,
     items,
+    fees,
   };
 }
 

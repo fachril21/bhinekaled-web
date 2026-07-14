@@ -60,6 +60,12 @@ export function OrderConfirmationCard({ order }: OrderConfirmationCardProps) {
             <span>Ongkos Kirim</span>
             <Price amount={order.shippingCost} />
           </div>
+          {order.fees.map((fee, index) => (
+            <div key={index} className="flex items-center justify-between text-neutral-600">
+              <span>{fee.label}</span>
+              <Price amount={fee.amount} />
+            </div>
+          ))}
           <div className="mt-1 flex items-center justify-between text-base font-bold text-neutral-900">
             <span>Total</span>
             <Price amount={order.total} />

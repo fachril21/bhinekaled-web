@@ -6,11 +6,13 @@ import { checkoutFormSchema } from "@/lib/validations";
 import { PAYMENT_METHOD_PLACEHOLDER_LABEL } from "@/lib/checkout-config";
 import { CheckoutOrderReview } from "@/components/storefront/CheckoutOrderReview";
 import type { CartItemDetail } from "@/lib/queries/cart";
+import type { CalculatedFee } from "@/lib/fees";
 
 type CheckoutFormProps = {
   items: CartItemDetail[];
   subtotal: number;
   shippingCost: number;
+  fees: CalculatedFee[];
 };
 
 type FormValues = {
@@ -27,7 +29,7 @@ const INITIAL_VALUES: FormValues = {
   notes: "",
 };
 
-export function CheckoutForm({ items, subtotal, shippingCost }: CheckoutFormProps) {
+export function CheckoutForm({ items, subtotal, shippingCost, fees }: CheckoutFormProps) {
   const router = useRouter();
   const [values, setValues] = useState<FormValues>(INITIAL_VALUES);
   const [fieldErrors, setFieldErrors] = useState<Partial<Record<keyof FormValues, string>>>({});
@@ -131,7 +133,7 @@ export function CheckoutForm({ items, subtotal, shippingCost }: CheckoutFormProp
       </div>
 
       <div className="flex flex-col gap-4">
-        <CheckoutOrderReview items={items} subtotal={subtotal} shippingCost={shippingCost} />
+        <CheckoutOrderReview items={items} subtotal={subtotal} shippingCost={shippingCost} fees={fees} />
         <button
           type="submit"
           disabled={isPending}

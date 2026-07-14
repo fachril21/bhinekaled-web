@@ -1,8 +1,10 @@
 import { readGuestSessionId } from "@/lib/guest-session";
 import { getCartItems } from "@/lib/queries/cart";
+import { getCheckoutFeePreview } from "@/lib/queries/fees";
 import { CheckoutForm } from "@/components/storefront/CheckoutForm";
 import { EmptyState } from "@/components/storefront/EmptyState";
 import { FLAT_SHIPPING_COST } from "@/lib/checkout-config";
+import type { CalculatedFee } from "@/lib/fees";
 
 const EMPTY_CART_MESSAGE = "Keranjang Anda masih kosong.";
 const NO_AVAILABLE_ITEMS_MESSAGE =
@@ -39,9 +41,11 @@ export default async function CheckoutPage() {
     );
   }
 
+  const fees = await fetchFeePreview(subtotal);
+
   return (
     <main className="mx-auto max-w-5xl px-4 py-10">
-      <CheckoutForm items={items} subtotal={subtotal} shippingCost={FLAT_SHIPPING_COST} />
+      <CheckoutForm items={items} subtotal={subtotal} shippingCost={FLAT_SHIPPING_COST} fees={fees} />
     </main>
   );
 }
@@ -54,5 +58,14 @@ async function fetchAvailableCartItems(guestSessionId: string) {
     return { status: "ok" as const, items, subtotal };
   } catch {
     return { status: "error" as const };
+  }
+}
+
+/** Kegagalan di sini TIDAK PERNAH memblokir halaman checkout — lihat plan Temuan #2. */
+async function fetchFeePreview(subtotal: number): Promise<CalculatedFee[]> {
+  try {
+    return await getCheckoutFeePreview(subtotal);
+  } catch {
+    return [];
   }
 }

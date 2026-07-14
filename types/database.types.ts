@@ -21,6 +21,7 @@ export type ProductStatus = "draft" | "active" | "archived";
 export type OrderStatus = "menunggu_konfirmasi" | "diproses" | "dikirim" | "selesai" | "dibatalkan";
 export type PaymentStatus = "n/a" | "unpaid" | "paid";
 export type AdminRole = "admin" | "superadmin";
+export type FeeType = "flat" | "percentage";
 
 export type Database = {
   public: {
@@ -407,6 +408,87 @@ export type Database = {
           created_at?: string;
         };
         Relationships: [];
+      };
+      additional_fees: {
+        Row: {
+          id: string;
+          label: string;
+          fee_type: FeeType;
+          amount: number;
+          is_active: boolean;
+          sort_order: number;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          label: string;
+          fee_type?: FeeType;
+          amount: number;
+          is_active?: boolean;
+          sort_order?: number;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          label?: string;
+          fee_type?: FeeType;
+          amount?: number;
+          is_active?: boolean;
+          sort_order?: number;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+      order_fees: {
+        Row: {
+          id: string;
+          order_id: string;
+          fee_id: string | null;
+          label_snapshot: string;
+          fee_type_snapshot: FeeType;
+          rate_snapshot: number;
+          amount: number;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          order_id: string;
+          fee_id?: string | null;
+          label_snapshot: string;
+          fee_type_snapshot: FeeType;
+          rate_snapshot: number;
+          amount: number;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          order_id?: string;
+          fee_id?: string | null;
+          label_snapshot?: string;
+          fee_type_snapshot?: FeeType;
+          rate_snapshot?: number;
+          amount?: number;
+          created_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "order_fees_order_id_fkey";
+            columns: ["order_id"];
+            isOneToOne: false;
+            referencedRelation: "orders";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "order_fees_fee_id_fkey";
+            columns: ["fee_id"];
+            isOneToOne: false;
+            referencedRelation: "additional_fees";
+            referencedColumns: ["id"];
+          },
+        ];
       };
     };
     Views: Record<string, never>;
