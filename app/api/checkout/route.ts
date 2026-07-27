@@ -35,33 +35,10 @@ import { getShippingOriginId } from "@/lib/checkout-config";
 import { calculateCartWeightGram } from "@/lib/shipping/weight";
 import { getShippingRates } from "@/lib/queries/shipping-rates";
 import { getDestinationLabel } from "@/lib/queries/shipping-destinations";
+import { isSameOriginRequest } from "@/lib/http/origin-guard";
 import type { FeeType } from "@/types/database.types";
 
 const GENERIC_SAVE_ERROR = "Gagal membuat pesanan, coba lagi.";
-
-/**
- * Route Handler tidak dapat proteksi CSRF bawaan yang otomatis didapat
- * Server Action (lihat docs/plan/epic-3-checkout-flow.md Temuan #7). Ini
- * mitigasi ringan (defense-in-depth), bukan proteksi keamanan kuat —
- * header Origin/Referer bisa dipalsukan non-browser client.
- */
-function isSameOriginRequest(request: NextRequest): boolean {
-  const ownOrigin = request.nextUrl.origin;
-
-  const origin = request.headers.get("origin");
-  if (origin) return origin === ownOrigin;
-
-  const referer = request.headers.get("referer");
-  if (referer) {
-    try {
-      return new URL(referer).origin === ownOrigin;
-    } catch {
-      return false;
-    }
-  }
-
-  return true; // tidak ada header sama sekali — biarkan lolos, lihat catatan di atas
-}
 
 export async function POST(request: NextRequest) {
   if (!isSameOriginRequest(request)) {
@@ -90,7 +67,7 @@ export async function POST(request: NextRequest) {
       { status: 400 }
     );
   }
-  const { customer_name, customer_phone, shipping_address, notes, shipping } = parsed.data;
+  const { customer_name, customer_phone, customer_email, shipping_address, notes, shipping } = parsed.data;
 
   let cart;
   try {
@@ -202,6 +179,7 @@ export async function POST(request: NextRequest) {
       guest_session_id: guestSessionId,
       customer_name,
       customer_phone,
+      customer_email: customer_email ?? null,
       shipping_address,
       notes: notes || null,
       subtotal,

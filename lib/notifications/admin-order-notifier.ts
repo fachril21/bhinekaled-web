@@ -17,3 +17,15 @@ export async function notifyAdminNewOrder(payload: AdminOrderNotificationPayload
     `[admin-notify] Order baru ${payload.orderNumber} dari ${payload.customerName}, total ${payload.total} — TODO Epic 9: kirim ke channel WA/email sungguhan.`
   );
 }
+
+/**
+ * Epic 13: Midtrans Payment Integration — stub sama pola notifyAdminNewOrder
+ * di atas, dipanggil non-blocking dari lib/payments/apply-status.ts begitu
+ * payment_status pertama kali jadi 'paid'. Channel WA/email sungguhan tetap
+ * menunggu Epic 9 (belum ada keputusan channel dari PO), bukan scope epic ini.
+ */
+export async function notifyAdminOrderPaid(payload: AdminOrderNotificationPayload): Promise<void> {
+  console.info(
+    `[admin-notify] Order ${payload.orderNumber} dari ${payload.customerName} telah DIBAYAR (${payload.total}) — TODO Epic 9: kirim ke channel WA/email sungguhan.`
+  );
+}

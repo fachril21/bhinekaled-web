@@ -12,6 +12,8 @@ import { formatDate, formatRupiah } from "@/lib/format";
 import { AdminOrderStatusBadge } from "@/components/admin/AdminOrderStatusBadge";
 import { OrderStatusStepper } from "@/components/admin/OrderStatusStepper";
 import { OrderStatusUpdateForm } from "@/components/admin/OrderStatusUpdateForm";
+import { PaymentStatusBadge } from "@/components/admin/PaymentStatusBadge";
+import { RecheckPaymentButton } from "@/components/admin/RecheckPaymentButton";
 
 type OrderDetailPageProps = {
   params: Promise<{ id: string }>;
@@ -90,13 +92,32 @@ export default async function Page({ params }: OrderDetailPageProps) {
             </div>
             <div className="flex justify-between">
               <dt className="text-neutral-500">Metode Pembayaran</dt>
-              <dd className="text-neutral-900">{order.paymentMethod ?? "n/a"}</dd>
+              <dd className="text-neutral-900">{order.midtransPaymentType ?? order.paymentMethod ?? "—"}</dd>
             </div>
             <div className="flex justify-between">
               <dt className="text-neutral-500">Status Pembayaran</dt>
-              <dd className="text-neutral-900">{order.paymentStatus}</dd>
+              <dd>
+                <PaymentStatusBadge status={order.paymentStatus} />
+              </dd>
+            </div>
+            <div className="flex justify-between">
+              <dt className="text-neutral-500">No. Transaksi Midtrans</dt>
+              <dd className="text-neutral-900">{order.midtransTransactionId ?? "—"}</dd>
+            </div>
+            <div className="flex justify-between">
+              <dt className="text-neutral-500">Terakhir Notifikasi</dt>
+              <dd className="text-neutral-900">
+                {order.midtransLastNotificationAt ? formatDate(order.midtransLastNotificationAt) : "—"}
+              </dd>
+            </div>
+            <div className="flex justify-between">
+              <dt className="text-neutral-500">Dibayar pada</dt>
+              <dd className="text-neutral-900">{order.paidAt ? formatDate(order.paidAt) : "—"}</dd>
             </div>
           </dl>
+          <div className="mt-4">
+            <RecheckPaymentButton orderId={order.id} />
+          </div>
         </div>
       </section>
 

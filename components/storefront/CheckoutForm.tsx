@@ -18,6 +18,7 @@ type CheckoutFormProps = {
 type FormValues = {
   customer_name: string;
   customer_phone: string;
+  customer_email: string;
   shipping_address: string;
   notes: string;
 };
@@ -25,6 +26,7 @@ type FormValues = {
 const INITIAL_VALUES: FormValues = {
   customer_name: "",
   customer_phone: "",
+  customer_email: "",
   shipping_address: "",
   notes: "",
 };
@@ -69,6 +71,7 @@ export function CheckoutForm({ items, subtotal, fees }: CheckoutFormProps) {
     const parsed = checkoutFormSchema.safeParse({
       customer_name: values.customer_name,
       customer_phone: values.customer_phone,
+      customer_email: values.customer_email,
       shipping_address: values.shipping_address,
       notes: values.notes || undefined,
       shipping: {
@@ -83,6 +86,7 @@ export function CheckoutForm({ items, subtotal, fees }: CheckoutFormProps) {
       setFieldErrors({
         customer_name: flattened.customer_name?.[0],
         customer_phone: flattened.customer_phone?.[0],
+        customer_email: flattened.customer_email?.[0],
         shipping_address: flattened.shipping_address?.[0],
         notes: flattened.notes?.[0],
       });
@@ -140,6 +144,14 @@ export function CheckoutForm({ items, subtotal, fees }: CheckoutFormProps) {
             error={fieldErrors.customer_phone}
             onChange={(v) => handleChange("customer_phone", v)}
             type="tel"
+          />
+          <Field
+            label="Email (opsional, untuk struk pembayaran)"
+            value={values.customer_email}
+            error={fieldErrors.customer_email}
+            onChange={(v) => handleChange("customer_email", v)}
+            type="email"
+            required={false}
           />
           <ShippingSelector onSelect={setSelectedShipping} />
           <Field

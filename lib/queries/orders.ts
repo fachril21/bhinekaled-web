@@ -31,6 +31,10 @@ export type OrderConfirmation = {
   items: OrderConfirmationItem[];
   fees: OrderConfirmationFee[];
   shippingCourierService: string | null;
+  // Epic 13: Midtrans Payment Integration
+  paymentStatus: PaymentStatus;
+  customerEmail: string | null;
+  midtransTransactionStatus: string | null;
 };
 
 /**
@@ -55,7 +59,7 @@ export async function getOrderByNumberForGuest(
   const { data: order, error: orderError } = await supabase
     .from("orders")
     .select(
-      "id, order_number, guest_session_id, customer_name, customer_phone, shipping_address, notes, subtotal, shipping_cost, total, status, created_at, shipping_courier_service"
+      "id, order_number, guest_session_id, customer_name, customer_phone, shipping_address, notes, subtotal, shipping_cost, total, status, created_at, shipping_courier_service, payment_status, customer_email, midtrans_transaction_status"
     )
     .eq("order_number", orderNumber)
     .maybeSingle();
@@ -106,6 +110,9 @@ export async function getOrderByNumberForGuest(
     items,
     fees,
     shippingCourierService: order.shipping_courier_service,
+    paymentStatus: order.payment_status,
+    customerEmail: order.customer_email,
+    midtransTransactionStatus: order.midtrans_transaction_status,
   };
 }
 
@@ -211,6 +218,14 @@ export type AdminOrderDetail = {
   items: AdminOrderDetailItem[];
   shippingCourierService: string | null;
   shippingDestinationLabel: string | null;
+  // Epic 13: Midtrans Payment Integration
+  customerEmail: string | null;
+  midtransTransactionId: string | null;
+  midtransPaymentType: string | null;
+  midtransTransactionStatus: string | null;
+  midtransFraudStatus: string | null;
+  midtransLastNotificationAt: string | null;
+  paidAt: string | null;
 };
 
 /** Fetch by id (orders.id UUID, bukan order_number) — dipakai halaman detail admin. */
@@ -220,7 +235,7 @@ export async function getAdminOrderById(id: string): Promise<AdminOrderDetail | 
   const { data: order, error: orderError } = await supabase
     .from("orders")
     .select(
-      "id, order_number, customer_name, customer_phone, shipping_address, notes, subtotal, shipping_cost, total, status, payment_method, payment_status, created_at, updated_at, shipping_courier_service, shipping_destination_label"
+      "id, order_number, customer_name, customer_phone, shipping_address, notes, subtotal, shipping_cost, total, status, payment_method, payment_status, created_at, updated_at, shipping_courier_service, shipping_destination_label, customer_email, midtrans_transaction_id, midtrans_payment_type, midtrans_transaction_status, midtrans_fraud_status, midtrans_last_notification_at, paid_at"
     )
     .eq("id", id)
     .maybeSingle();
@@ -251,6 +266,13 @@ export async function getAdminOrderById(id: string): Promise<AdminOrderDetail | 
     updatedAt: order.updated_at,
     shippingCourierService: order.shipping_courier_service,
     shippingDestinationLabel: order.shipping_destination_label,
+    customerEmail: order.customer_email,
+    midtransTransactionId: order.midtrans_transaction_id,
+    midtransPaymentType: order.midtrans_payment_type,
+    midtransTransactionStatus: order.midtrans_transaction_status,
+    midtransFraudStatus: order.midtrans_fraud_status,
+    midtransLastNotificationAt: order.midtrans_last_notification_at,
+    paidAt: order.paid_at,
     items: (itemRows ?? []).map((row) => ({
       id: row.id,
       productId: row.product_id,

@@ -25,12 +25,53 @@ export const checkoutFormSchema = z.object({
     .string()
     .min(9, "Nomor HP tidak valid")
     .regex(/^[0-9+ -]+$/, "Nomor HP hanya boleh berisi angka"),
+  // Epic 13: Midtrans Payment Integration (Keputusan B) — opsional, dipakai
+  // untuk customer_details.email Midtrans. String kosong ditransform jadi
+  // undefined supaya field "email" tidak dikirim sama sekali ke Midtrans
+  // kalau customer tidak isi (bukan string kosong).
+  customer_email: z
+    .string()
+    .trim()
+    .email("Email tidak valid")
+    .optional()
+    .or(z.literal(""))
+    .transform((v) => (v ? v : undefined)),
   shipping_address: z.string().min(10, "Alamat terlalu singkat"),
   notes: z.string().optional(),
   shipping: shippingSelectionSchema, // Epic 12 — wajib, user harus pilih 1 opsi kurir
 });
 
 export type CheckoutFormValues = z.infer<typeof checkoutFormSchema>;
+
+// Epic 13: Midtrans Payment Integration (Snap Redirect)
+export const midtransTokenRequestSchema = z.object({
+  orderNumber: z.string().min(1),
+});
+
+export const midtransNotificationSchema = z.object({
+  order_id: z.string().min(1),
+  status_code: z.string().min(1),
+  gross_amount: z.string().min(1),
+  signature_key: z.string().min(1),
+  transaction_id: z.string().min(1),
+  transaction_status: z.enum([
+    "capture",
+    "settlement",
+    "pending",
+    "deny",
+    "cancel",
+    "expire",
+    "refund",
+    "partial_refund",
+  ]),
+  fraud_status: z.enum(["accept", "challenge", "deny"]).optional(),
+  payment_type: z.string().min(1),
+});
+// Zod .object() default STRIP field tak dikenal dari parsed.data (bukan
+// reject) — TAPI midtrans_raw_notification yang disimpan ke DB pakai `body`
+// mentah (sebelum parse), BUKAN `parsed.data`, supaya field spesifik-channel
+// (va_numbers, biller_code, dst — beda-beda tiap payment_type) tidak hilang
+// untuk keperluan audit/support (PRD §7.4). Lihat app/api/payments/midtrans/notification/route.ts.
 
 // Epic 4: Admin Auth
 export const adminLoginSchema = z.object({

@@ -1,5 +1,6 @@
 import { Price } from "@/components/ui/Price";
 import { formatDate } from "@/lib/format";
+import { PayNowButton } from "@/components/storefront/PayNowButton";
 import type { OrderConfirmation } from "@/lib/queries/orders";
 
 const STATUS_LABEL: Record<OrderConfirmation["status"], string> = {
@@ -33,6 +34,8 @@ export function OrderConfirmationCard({ order }: OrderConfirmationCardProps) {
         </span>
         <span className="mt-1 text-xs text-neutral-500">{formatDate(order.createdAt)}</span>
       </div>
+
+      <PaymentSection paymentStatus={order.paymentStatus} orderStatus={order.status} orderNumber={order.orderNumber} />
 
       <div className="rounded-xl border border-neutral-200 p-5">
         <h2 className="mb-3 text-sm font-semibold text-neutral-900">Ringkasan Pesanan</h2>
@@ -82,4 +85,43 @@ export function OrderConfirmationCard({ order }: OrderConfirmationCardProps) {
       </div>
     </div>
   );
+}
+
+type PaymentSectionProps = {
+  paymentStatus: OrderConfirmation["paymentStatus"];
+  orderStatus: OrderConfirmation["status"];
+  orderNumber: string;
+};
+
+/** Epic 13: Midtrans Payment Integration — lihat plan bagian 8.4 untuk matriks lengkap. */
+function PaymentSection({ paymentStatus, orderStatus, orderNumber }: PaymentSectionProps) {
+  if (paymentStatus === "paid") {
+    return (
+      <div className="rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-center text-sm font-semibold text-green-700">
+        ✓ Sudah Dibayar
+      </div>
+    );
+  }
+
+  if (paymentStatus === "review") {
+    return (
+      <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-center text-sm text-amber-700">
+        Pembayaran sedang diverifikasi, admin akan menghubungi Anda.
+      </div>
+    );
+  }
+
+  if (paymentStatus === "refunded" || paymentStatus === "partially_refunded") {
+    return (
+      <div className="rounded-xl border border-indigo-200 bg-indigo-50 px-4 py-3 text-center text-sm text-indigo-700">
+        {paymentStatus === "refunded" ? "Pembayaran sudah direfund." : "Pembayaran direfund sebagian."}
+      </div>
+    );
+  }
+
+  // n/a, pending, failed, expired, cancelled — bisa coba/ulang bayar,
+  // KECUALI order fulfillment-nya sendiri sudah dibatalkan admin.
+  if (orderStatus === "dibatalkan") return null;
+
+  return <PayNowButton orderNumber={orderNumber} />;
 }
