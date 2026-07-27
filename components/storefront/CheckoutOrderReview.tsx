@@ -5,13 +5,14 @@ import type { CalculatedFee } from "@/lib/fees";
 type CheckoutOrderReviewProps = {
   items: CartItemDetail[];
   subtotal: number;
-  shippingCost: number;
+  shippingCost: number | null; // Epic 12 — null = belum pilih tujuan & kurir
+  shippingLabel?: string;
   fees: CalculatedFee[];
 };
 
-export function CheckoutOrderReview({ items, subtotal, shippingCost, fees }: CheckoutOrderReviewProps) {
+export function CheckoutOrderReview({ items, subtotal, shippingCost, shippingLabel, fees }: CheckoutOrderReviewProps) {
   const feesTotal = fees.reduce((sum, fee) => sum + fee.amount, 0);
-  const total = subtotal + shippingCost + feesTotal;
+  const total = shippingCost === null ? null : subtotal + shippingCost + feesTotal;
 
   return (
     <div className="rounded-xl border border-neutral-200 bg-neutral-50 p-5">
@@ -38,8 +39,12 @@ export function CheckoutOrderReview({ items, subtotal, shippingCost, fees }: Che
           <Price amount={subtotal} />
         </div>
         <div className="flex items-center justify-between text-neutral-600">
-          <span>Ongkos Kirim</span>
-          <Price amount={shippingCost} />
+          <span>Ongkos Kirim{shippingLabel && ` (${shippingLabel})`}</span>
+          {shippingCost === null ? (
+            <span className="text-neutral-400">Pilih tujuan &amp; kurir dulu</span>
+          ) : (
+            <Price amount={shippingCost} />
+          )}
         </div>
         {fees.map((fee) => (
           <div key={fee.feeId} className="flex items-center justify-between text-neutral-600">
@@ -49,7 +54,7 @@ export function CheckoutOrderReview({ items, subtotal, shippingCost, fees }: Che
         ))}
         <div className="mt-1 flex items-center justify-between text-base font-bold text-neutral-900">
           <span>Total</span>
-          <Price amount={total} />
+          {total === null ? <span>—</span> : <Price amount={total} />}
         </div>
       </div>
     </div>

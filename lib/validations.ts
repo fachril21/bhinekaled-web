@@ -1,6 +1,23 @@
 import { z } from "zod";
 import { SLUG_REGEX } from "@/lib/slug";
 
+// Epic 12: Cek Ongkir Real-Time (RajaOngkir) — dideklarasikan sebelum
+// checkoutFormSchema karena dipakai sebagai field di dalamnya.
+export const shippingDestinationSearchSchema = z.object({
+  q: z.string().trim().min(3, "Ketik minimal 3 karakter"),
+});
+
+export const shippingRateRequestSchema = z.object({
+  destinationId: z.string().min(1, "Tujuan wajib dipilih"),
+});
+
+export const shippingSelectionSchema = z.object({
+  destinationId: z.string().min(1),
+  courierCode: z.string().min(1),
+  serviceCode: z.string().min(1),
+});
+export type ShippingSelectionValues = z.infer<typeof shippingSelectionSchema>;
+
 // Epic 3: Checkout Flow
 export const checkoutFormSchema = z.object({
   customer_name: z.string().min(3, "Nama minimal 3 karakter"),
@@ -10,6 +27,7 @@ export const checkoutFormSchema = z.object({
     .regex(/^[0-9+ -]+$/, "Nomor HP hanya boleh berisi angka"),
   shipping_address: z.string().min(10, "Alamat terlalu singkat"),
   notes: z.string().optional(),
+  shipping: shippingSelectionSchema, // Epic 12 — wajib, user harus pilih 1 opsi kurir
 });
 
 export type CheckoutFormValues = z.infer<typeof checkoutFormSchema>;
@@ -46,6 +64,7 @@ const productVariantInputSchema = z.object({
   sku: z.string().trim().optional().nullable(),
   priceOverride: z.number().nonnegative().nullable(),
   stock: z.number().int().nonnegative(),
+  weightOverride: z.number().int().nonnegative().nullable(), // Epic 12 — null = warisi weight_gram produk
 });
 
 export const productFormSchema = z.object({
@@ -59,6 +78,7 @@ export const productFormSchema = z.object({
   categoryId: z.string().uuid().nullable(),
   basePrice: z.number().nonnegative("Harga tidak boleh negatif"),
   stock: z.number().int().nonnegative("Stok tidak boleh negatif"),
+  weightGram: z.number().int().nonnegative("Berat tidak boleh negatif"), // Epic 12
   status: z.enum(["draft", "active", "archived"]),
   vehicleCompatibility: z.array(z.string().min(1)).default([]),
   specifications: z

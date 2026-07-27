@@ -75,6 +75,7 @@ export type Database = {
           specifications: Json;
           meta_title: string | null;
           meta_description: string | null;
+          weight_gram: number;
           created_at: string;
           updated_at: string;
         };
@@ -91,6 +92,7 @@ export type Database = {
           specifications?: Json;
           meta_title?: string | null;
           meta_description?: string | null;
+          weight_gram?: number;
           created_at?: string;
           updated_at?: string;
         };
@@ -107,6 +109,7 @@ export type Database = {
           specifications?: Json;
           meta_title?: string | null;
           meta_description?: string | null;
+          weight_gram?: number;
           created_at?: string;
           updated_at?: string;
         };
@@ -164,6 +167,7 @@ export type Database = {
           price_override: number | null;
           stock: number;
           attributes: Json;
+          weight_override: number | null;
           created_at: string;
           updated_at: string;
         };
@@ -175,6 +179,7 @@ export type Database = {
           price_override?: number | null;
           stock?: number;
           attributes?: Json;
+          weight_override?: number | null;
           created_at?: string;
           updated_at?: string;
         };
@@ -186,6 +191,7 @@ export type Database = {
           price_override?: number | null;
           stock?: number;
           attributes?: Json;
+          weight_override?: number | null;
           created_at?: string;
           updated_at?: string;
         };
@@ -288,6 +294,9 @@ export type Database = {
           status: OrderStatus;
           payment_method: string | null;
           payment_status: PaymentStatus;
+          shipping_courier_code: string | null;
+          shipping_courier_service: string | null;
+          shipping_destination_label: string | null;
           created_at: string;
           updated_at: string;
         };
@@ -305,6 +314,9 @@ export type Database = {
           status?: OrderStatus;
           payment_method?: string | null;
           payment_status?: PaymentStatus;
+          shipping_courier_code?: string | null;
+          shipping_courier_service?: string | null;
+          shipping_destination_label?: string | null;
           created_at?: string;
           updated_at?: string;
         };
@@ -322,6 +334,9 @@ export type Database = {
           status?: OrderStatus;
           payment_method?: string | null;
           payment_status?: PaymentStatus;
+          shipping_courier_code?: string | null;
+          shipping_courier_service?: string | null;
+          shipping_destination_label?: string | null;
           created_at?: string;
           updated_at?: string;
         };
@@ -489,6 +504,96 @@ export type Database = {
             referencedColumns: ["id"];
           },
         ];
+      };
+      shipping_destination_cache: {
+        Row: {
+          id: string;
+          search_query: string;
+          results: Json;
+          created_at: string;
+          expires_at: string;
+        };
+        Insert: {
+          id?: string;
+          search_query: string;
+          results: Json;
+          created_at?: string;
+          expires_at?: string;
+        };
+        Update: {
+          id?: string;
+          search_query?: string;
+          results?: Json;
+          created_at?: string;
+          expires_at?: string;
+        };
+        Relationships: [];
+      };
+      shipping_destinations: {
+        Row: {
+          id: string;
+          label: string;
+          province: string | null;
+          city: string | null;
+          district: string | null;
+          subdistrict: string | null;
+          zip_code: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id: string;
+          label: string;
+          province?: string | null;
+          city?: string | null;
+          district?: string | null;
+          subdistrict?: string | null;
+          zip_code?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          label?: string;
+          province?: string | null;
+          city?: string | null;
+          district?: string | null;
+          subdistrict?: string | null;
+          zip_code?: string | null;
+          created_at?: string;
+        };
+        Relationships: [];
+      };
+      shipping_rate_cache: {
+        Row: {
+          id: string;
+          origin_id: string;
+          destination_id: string;
+          weight_bucket: number;
+          courier_set: string;
+          results: Json;
+          created_at: string;
+          expires_at: string;
+        };
+        Insert: {
+          id?: string;
+          origin_id: string;
+          destination_id: string;
+          weight_bucket: number;
+          courier_set: string;
+          results: Json;
+          created_at?: string;
+          expires_at?: string;
+        };
+        Update: {
+          id?: string;
+          origin_id?: string;
+          destination_id?: string;
+          weight_bucket?: number;
+          courier_set?: string;
+          results?: Json;
+          created_at?: string;
+          expires_at?: string;
+        };
+        Relationships: [];
       };
     };
     Views: Record<string, never>;

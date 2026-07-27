@@ -14,6 +14,7 @@ export type CartItemDetail = {
   availableStock: number;
   qty: number;
   lineSubtotal: number;
+  weightGram: number; // Epic 12 — dipakai kalkulasi ongkir
 };
 
 export type CartSummary = {
@@ -33,11 +34,13 @@ type CartRow = {
     status: string;
     base_price: number;
     stock: number;
+    weight_gram: number;
   } | null;
   product_variants: {
     name: string;
     price_override: number | null;
     stock: number;
+    weight_override: number | null;
   } | null;
 };
 
@@ -46,8 +49,8 @@ const CART_SELECT = `
   product_id,
   variant_id,
   qty,
-  products ( name, slug, status, base_price, stock ),
-  product_variants ( name, price_override, stock )
+  products ( name, slug, status, base_price, stock, weight_gram ),
+  product_variants ( name, price_override, stock, weight_override )
 `;
 
 /**
@@ -106,6 +109,7 @@ export async function getCartItems(guestSessionId: string): Promise<CartSummary>
     const productIsAvailable = product.status === "active";
     const unitPrice = variant ? variant.price_override ?? product.base_price : product.base_price;
     const availableStock = variant ? variant.stock : product.stock;
+    const weightGram = variant ? variant.weight_override ?? product.weight_gram : product.weight_gram;
     const image = imageByProduct.get(row.product_id);
     const lineSubtotal = productIsAvailable ? unitPrice * row.qty : 0;
 
@@ -123,6 +127,7 @@ export async function getCartItems(guestSessionId: string): Promise<CartSummary>
       availableStock,
       qty: row.qty,
       lineSubtotal,
+      weightGram,
     };
   });
 

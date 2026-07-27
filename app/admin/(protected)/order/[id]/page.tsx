@@ -76,6 +76,14 @@ export default async function Page({ params }: OrderDetailPageProps) {
               <dt className="text-neutral-500">Ongkir</dt>
               <dd className="text-neutral-900">{formatRupiah(order.shippingCost)}</dd>
             </div>
+            <div className="flex justify-between">
+              <dt className="text-neutral-500">Kurir</dt>
+              <dd className="text-neutral-900">{order.shippingCourierService ?? "—"}</dd>
+            </div>
+            <div className="flex justify-between">
+              <dt className="text-neutral-500">Tujuan Ongkir</dt>
+              <dd className="text-neutral-900">{order.shippingDestinationLabel ?? "—"}</dd>
+            </div>
             <div className="flex justify-between border-t border-neutral-200 pt-2 font-semibold">
               <dt className="text-neutral-900">Total</dt>
               <dd className="text-neutral-900">{formatRupiah(order.total)}</dd>

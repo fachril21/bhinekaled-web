@@ -30,6 +30,7 @@ export type OrderConfirmation = {
   createdAt: string;
   items: OrderConfirmationItem[];
   fees: OrderConfirmationFee[];
+  shippingCourierService: string | null;
 };
 
 /**
@@ -54,7 +55,7 @@ export async function getOrderByNumberForGuest(
   const { data: order, error: orderError } = await supabase
     .from("orders")
     .select(
-      "id, order_number, guest_session_id, customer_name, customer_phone, shipping_address, notes, subtotal, shipping_cost, total, status, created_at"
+      "id, order_number, guest_session_id, customer_name, customer_phone, shipping_address, notes, subtotal, shipping_cost, total, status, created_at, shipping_courier_service"
     )
     .eq("order_number", orderNumber)
     .maybeSingle();
@@ -104,6 +105,7 @@ export async function getOrderByNumberForGuest(
     createdAt: order.created_at,
     items,
     fees,
+    shippingCourierService: order.shipping_courier_service,
   };
 }
 
@@ -207,6 +209,8 @@ export type AdminOrderDetail = {
   createdAt: string;
   updatedAt: string;
   items: AdminOrderDetailItem[];
+  shippingCourierService: string | null;
+  shippingDestinationLabel: string | null;
 };
 
 /** Fetch by id (orders.id UUID, bukan order_number) — dipakai halaman detail admin. */
@@ -216,7 +220,7 @@ export async function getAdminOrderById(id: string): Promise<AdminOrderDetail | 
   const { data: order, error: orderError } = await supabase
     .from("orders")
     .select(
-      "id, order_number, customer_name, customer_phone, shipping_address, notes, subtotal, shipping_cost, total, status, payment_method, payment_status, created_at, updated_at"
+      "id, order_number, customer_name, customer_phone, shipping_address, notes, subtotal, shipping_cost, total, status, payment_method, payment_status, created_at, updated_at, shipping_courier_service, shipping_destination_label"
     )
     .eq("id", id)
     .maybeSingle();
@@ -245,6 +249,8 @@ export async function getAdminOrderById(id: string): Promise<AdminOrderDetail | 
     paymentStatus: order.payment_status,
     createdAt: order.created_at,
     updatedAt: order.updated_at,
+    shippingCourierService: order.shipping_courier_service,
+    shippingDestinationLabel: order.shipping_destination_label,
     items: (itemRows ?? []).map((row) => ({
       id: row.id,
       productId: row.product_id,

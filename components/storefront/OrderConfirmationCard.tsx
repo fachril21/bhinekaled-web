@@ -57,7 +57,7 @@ export function OrderConfirmationCard({ order }: OrderConfirmationCardProps) {
             <Price amount={order.subtotal} />
           </div>
           <div className="flex items-center justify-between text-neutral-600">
-            <span>Ongkos Kirim</span>
+            <span>Ongkos Kirim{order.shippingCourierService && ` (${order.shippingCourierService})`}</span>
             <Price amount={order.shippingCost} />
           </div>
           {order.fees.map((fee, index) => (

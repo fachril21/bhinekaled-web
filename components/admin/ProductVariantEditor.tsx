@@ -9,6 +9,7 @@ export type ManagedVariant = {
   sku: string;
   priceOverride: string; // kosong = pakai base_price produk
   stock: string;
+  weightOverride: string; // kosong = pakai weight_gram produk (Epic 12)
 };
 
 type ProductVariantEditorProps = {
@@ -37,7 +38,7 @@ export function ProductVariantEditor({
   }
 
   function addVariant() {
-    onChange([...variants, { name: "", sku: "", priceOverride: "", stock: "0" }]);
+    onChange([...variants, { name: "", sku: "", priceOverride: "", stock: "0", weightOverride: "" }]);
   }
 
   return (
@@ -54,7 +55,7 @@ export function ProductVariantEditor({
       )}
 
       {variants.map((variant, index) => (
-        <div key={variant.id ?? `new-${index}`} className="grid grid-cols-1 gap-2 rounded-lg border border-neutral-200 p-3 sm:grid-cols-[2fr_1fr_1fr_1fr_auto]">
+        <div key={variant.id ?? `new-${index}`} className="grid grid-cols-1 gap-2 rounded-lg border border-neutral-200 p-3 sm:grid-cols-[2fr_1fr_1fr_1fr_1fr_auto]">
           <input
             value={variant.name}
             onChange={(e) => updateVariant(index, "name", e.target.value)}
@@ -78,6 +79,13 @@ export function ProductVariantEditor({
             value={variant.stock}
             onChange={(e) => updateVariant(index, "stock", e.target.value)}
             placeholder="Stok"
+            inputMode="numeric"
+            className="rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-brand-red focus:outline-none"
+          />
+          <input
+            value={variant.weightOverride}
+            onChange={(e) => updateVariant(index, "weightOverride", e.target.value)}
+            placeholder="Berat gram (opsional)"
             inputMode="numeric"
             className="rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-brand-red focus:outline-none"
           />

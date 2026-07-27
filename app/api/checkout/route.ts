@@ -4,11 +4,13 @@
 // Route Handler (bukan Server Action) — lihat docs/ARCHITECTURE.md &
 // docs/plan/epic-3-checkout-flow.md Temuan #8.
 //
-// Body request HANYA berisi data pengiriman (nama, no. HP, alamat, catatan)
-// — TIDAK PERNAH harga/subtotal/total. Semua angka uang dihitung ulang 100%
-// di server dari data Supabase + FLAT_SHIPPING_COST, supaya tidak ada celah
-// manipulasi harga dari client (Temuan #4a — dikonfirmasi eksplisit sebagai
-// syarat keamanan oleh user).
+// Body request HANYA berisi data pengiriman (nama, no. HP, alamat, catatan,
+// pilihan kurir) — TIDAK PERNAH harga/subtotal/total/ongkir. Semua angka
+// uang dihitung ulang 100% di server dari data Supabase, supaya tidak ada
+// celah manipulasi harga dari client (Temuan #4a — dikonfirmasi eksplisit
+// sebagai syarat keamanan oleh user). Epic 12: ongkir juga direvalidasi
+// otoritatif di server dari hasil RajaOngkir, bukan dipercaya dari client
+// (Keputusan A).
 //
 // Pakai admin client (service role) untuk seluruh mutasi di handler ini:
 // RLS publik pada products/product_variants hanya mengizinkan SELECT produk
@@ -27,9 +29,12 @@ import {
   restoreStockForCheckout,
   type StockGuardTarget,
 } from "@/lib/checkout/stock-guard";
-import { FLAT_SHIPPING_COST } from "@/lib/checkout-config";
 import { notifyAdminNewOrder } from "@/lib/notifications/admin-order-notifier";
 import { calculateFees, sumFees, type CalculatedFee } from "@/lib/fees";
+import { getShippingOriginId } from "@/lib/checkout-config";
+import { calculateCartWeightGram } from "@/lib/shipping/weight";
+import { getShippingRates } from "@/lib/queries/shipping-rates";
+import { getDestinationLabel } from "@/lib/queries/shipping-destinations";
 import type { FeeType } from "@/types/database.types";
 
 const GENERIC_SAVE_ERROR = "Gagal membuat pesanan, coba lagi.";
@@ -85,7 +90,7 @@ export async function POST(request: NextRequest) {
       { status: 400 }
     );
   }
-  const { customer_name, customer_phone, shipping_address, notes } = parsed.data;
+  const { customer_name, customer_phone, shipping_address, notes, shipping } = parsed.data;
 
   let cart;
   try {
@@ -111,7 +116,42 @@ export async function POST(request: NextRequest) {
   }
 
   const subtotal = available.reduce((sum, item) => sum + item.lineSubtotal, 0);
-  const shippingCost = FLAT_SHIPPING_COST;
+
+  // Epic 12 (Keputusan A) — nilai ongkir TIDAK PERNAH dipercaya dari client,
+  // dihitung ulang otoritatif di server dari cart guest session saat ini,
+  // lalu dicocokkan dengan pilihan courierCode+serviceCode yang dikirim.
+  const cartWeightGram = calculateCartWeightGram(
+    available.map((item) => ({ weightGram: item.weightGram, qty: item.qty }))
+  );
+
+  let shippingCost: number;
+  let shippingCourierService: string;
+  try {
+    const rateResult = await getShippingRates({
+      originId: getShippingOriginId(),
+      destinationId: shipping.destinationId,
+      cartWeightGram,
+    });
+    const matched = rateResult.options.find(
+      (opt) => opt.courierCode === shipping.courierCode && opt.serviceCode === shipping.serviceCode
+    );
+    if (!matched) {
+      return NextResponse.json(
+        { error: "Opsi pengiriman yang dipilih sudah tidak berlaku, silakan pilih ulang." },
+        { status: 400 }
+      );
+    }
+    shippingCost = matched.cost; // OTORITATIF — bukan dari client
+    shippingCourierService = `${matched.courierName} - ${matched.serviceName}`;
+  } catch {
+    // Keputusan D — TIDAK fallback ke flat rate diam-diam, tolak dengan jelas.
+    return NextResponse.json(
+      { error: "Gagal memvalidasi ongkir, coba lagi sebentar lagi." },
+      { status: 502 }
+    );
+  }
+
+  const destinationLabel = await getDestinationLabel(shipping.destinationId).catch(() => null);
 
   const supabase = createAdminClient();
 
@@ -167,6 +207,9 @@ export async function POST(request: NextRequest) {
       subtotal,
       shipping_cost: shippingCost,
       total,
+      shipping_courier_code: shipping.courierCode,
+      shipping_courier_service: shippingCourierService,
+      shipping_destination_label: destinationLabel,
     })
     .select("id, order_number")
     .single();

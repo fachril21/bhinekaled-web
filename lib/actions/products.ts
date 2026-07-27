@@ -41,6 +41,7 @@ export async function saveProductAction(input: ProductFormValues): Promise<Produ
     category_id: v.categoryId,
     base_price: v.basePrice,
     stock: v.stock,
+    weight_gram: v.weightGram,
     status: v.status,
     vehicle_compatibility: v.vehicleCompatibility,
     specifications: Object.fromEntries(v.specifications.map((s) => [s.key, s.value])),
@@ -112,6 +113,7 @@ export async function saveProductAction(input: ProductFormValues): Promise<Produ
         sku: variant.sku ?? null,
         price_override: variant.priceOverride,
         stock: variant.stock,
+        weight_override: variant.weightOverride,
       };
       if (variant.id) {
         const { error } = await supabase.from("product_variants").update(row).eq("id", variant.id);

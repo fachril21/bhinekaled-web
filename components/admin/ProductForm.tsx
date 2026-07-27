@@ -46,6 +46,7 @@ function toManagedVariants(product?: AdminProductDetail): ManagedVariant[] {
     sku: v.sku ?? "",
     priceOverride: v.priceOverride === null ? "" : String(v.priceOverride),
     stock: String(v.stock),
+    weightOverride: v.weightOverride === null ? "" : String(v.weightOverride),
   }));
 }
 
@@ -60,6 +61,7 @@ export function ProductForm({ mode, categories, initialProduct }: ProductFormPro
   const [categoryId, setCategoryId] = useState(initialProduct?.categoryId ?? "");
   const [basePrice, setBasePrice] = useState(initialProduct ? String(initialProduct.basePrice) : "0");
   const [stock, setStock] = useState(initialProduct ? String(initialProduct.stock) : "0");
+  const [weightGram, setWeightGram] = useState(initialProduct ? String(initialProduct.weightGram) : "0");
   const [status, setStatus] = useState<ProductStatus>(initialProduct?.status ?? "draft");
   const [metaTitle, setMetaTitle] = useState(initialProduct?.metaTitle ?? "");
   const [metaDescription, setMetaDescription] = useState(initialProduct?.metaDescription ?? "");
@@ -101,6 +103,7 @@ export function ProductForm({ mode, categories, initialProduct }: ProductFormPro
         categoryId: categoryId || null,
         basePrice: Number(basePrice) || 0,
         stock: Number(stock) || 0,
+        weightGram: Number(weightGram) || 0,
         status,
         vehicleCompatibility: cleanedVehicleCompatibility,
         specifications: cleanedSpecifications,
@@ -119,6 +122,7 @@ export function ProductForm({ mode, categories, initialProduct }: ProductFormPro
           sku: v.sku || null,
           priceOverride: v.priceOverride === "" ? null : Number(v.priceOverride) || 0,
           stock: Number(v.stock) || 0,
+          weightOverride: v.weightOverride === "" ? null : Number(v.weightOverride) || 0,
         })),
         deletedVariantIds,
       });
@@ -184,7 +188,7 @@ export function ProductForm({ mode, categories, initialProduct }: ProductFormPro
         />
       </div>
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-5">
         <div className="flex flex-col gap-1">
           <label htmlFor="product-category" className="text-sm font-medium text-neutral-700">
             Kategori
@@ -244,6 +248,20 @@ export function ProductForm({ mode, categories, initialProduct }: ProductFormPro
             id="product-stock"
             value={stock}
             onChange={(e) => setStock(e.target.value)}
+            inputMode="numeric"
+            required
+            className="rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-brand-red focus:outline-none"
+          />
+        </div>
+
+        <div className="flex flex-col gap-1">
+          <label htmlFor="product-weight" className="text-sm font-medium text-neutral-700">
+            Berat (gram)
+          </label>
+          <input
+            id="product-weight"
+            value={weightGram}
+            onChange={(e) => setWeightGram(e.target.value)}
             inputMode="numeric"
             required
             className="rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-brand-red focus:outline-none"

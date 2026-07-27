@@ -94,13 +94,21 @@ export type AdminProductDetail = {
   categoryId: string | null;
   basePrice: number;
   stock: number;
+  weightGram: number;
   status: ProductStatus;
   vehicleCompatibility: string[];
   specifications: { key: string; value: string }[];
   metaTitle: string | null;
   metaDescription: string | null;
   images: { id: string; url: string; altText: string | null; sortOrder: number }[];
-  variants: { id: string; name: string; sku: string | null; priceOverride: number | null; stock: number }[];
+  variants: {
+    id: string;
+    name: string;
+    sku: string | null;
+    priceOverride: number | null;
+    stock: number;
+    weightOverride: number | null;
+  }[];
 };
 
 type AdminDetailRow = {
@@ -111,6 +119,7 @@ type AdminDetailRow = {
   category_id: string | null;
   base_price: number;
   stock: number;
+  weight_gram: number;
   status: ProductStatus;
   vehicle_compatibility: Json;
   specifications: Json;
@@ -118,7 +127,14 @@ type AdminDetailRow = {
   meta_description: string | null;
   product_images: { id: string; url: string; alt_text: string | null; sort_order: number }[] | null;
   product_variants:
-    | { id: string; name: string; sku: string | null; price_override: number | null; stock: number }[]
+    | {
+        id: string;
+        name: string;
+        sku: string | null;
+        price_override: number | null;
+        stock: number;
+        weight_override: number | null;
+      }[]
     | null;
 };
 
@@ -137,13 +153,14 @@ export async function getAdminProductById(id: string): Promise<AdminProductDetai
       category_id,
       base_price,
       stock,
+      weight_gram,
       status,
       vehicle_compatibility,
       specifications,
       meta_title,
       meta_description,
       product_images ( id, url, alt_text, sort_order ),
-      product_variants ( id, name, sku, price_override, stock )
+      product_variants ( id, name, sku, price_override, stock, weight_override )
     `
     )
     .eq("id", id)
@@ -164,6 +181,7 @@ export async function getAdminProductById(id: string): Promise<AdminProductDetai
     sku: v.sku,
     priceOverride: v.price_override,
     stock: v.stock,
+    weightOverride: v.weight_override,
   }));
 
   const specificationsObject =
@@ -187,6 +205,7 @@ export async function getAdminProductById(id: string): Promise<AdminProductDetai
     categoryId: row.category_id,
     basePrice: row.base_price,
     stock: row.stock,
+    weightGram: row.weight_gram,
     status: row.status,
     vehicleCompatibility,
     specifications,
