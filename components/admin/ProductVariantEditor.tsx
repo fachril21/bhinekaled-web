@@ -60,34 +60,39 @@ export function ProductVariantEditor({
             value={variant.name}
             onChange={(e) => updateVariant(index, "name", e.target.value)}
             placeholder="Nama varian (mis. Putih 6000K - H4)"
-            className="rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-brand-red focus:outline-none"
+            aria-label="Nama varian"
+            className="rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-brand-red focus:outline-none focus:ring-1 focus:ring-brand-red"
           />
           <input
             value={variant.sku}
             onChange={(e) => updateVariant(index, "sku", e.target.value)}
             placeholder="SKU"
-            className="rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-brand-red focus:outline-none"
+            aria-label="SKU varian"
+            className="rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-brand-red focus:outline-none focus:ring-1 focus:ring-brand-red"
           />
           <input
             value={variant.priceOverride}
             onChange={(e) => updateVariant(index, "priceOverride", e.target.value)}
             placeholder="Harga (opsional)"
+            aria-label="Harga varian (opsional)"
             inputMode="numeric"
-            className="rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-brand-red focus:outline-none"
+            className="rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-brand-red focus:outline-none focus:ring-1 focus:ring-brand-red"
           />
           <input
             value={variant.stock}
             onChange={(e) => updateVariant(index, "stock", e.target.value)}
             placeholder="Stok"
+            aria-label="Stok varian"
             inputMode="numeric"
-            className="rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-brand-red focus:outline-none"
+            className="rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-brand-red focus:outline-none focus:ring-1 focus:ring-brand-red"
           />
           <input
             value={variant.weightOverride}
             onChange={(e) => updateVariant(index, "weightOverride", e.target.value)}
             placeholder="Berat gram (opsional)"
+            aria-label="Berat varian dalam gram (opsional)"
             inputMode="numeric"
-            className="rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-brand-red focus:outline-none"
+            className="rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-brand-red focus:outline-none focus:ring-1 focus:ring-brand-red"
           />
           <button
             type="button"

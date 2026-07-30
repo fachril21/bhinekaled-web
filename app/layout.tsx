@@ -1,12 +1,21 @@
 import type { Metadata } from "next";
+import { Inter, Poppins } from "next/font/google";
 import "./globals.css";
 
-// NOTE: Brand Guideline (docs/BRAND_GUIDELINE.md) merekomendasikan
-// Poppins ExtraBold / Montserrat Black untuk heading. Font Google belum
-// dipasang di sini supaya Epic 0 tetap bisa di-build tanpa dependency
-// internet ke fonts.googleapis.com — pasang next/font/google beneran di
-// Epic 8 (SEO, Analytics & Site-wide Enhancements) atau lebih awal kalau
-// mau langsung sekalian pas bikin komponen UI.
+// Sesuai docs/BRAND_GUIDELINE.md §3: Poppins ExtraBold untuk heading,
+// Inter untuk body copy.
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-body",
+  display: "swap",
+});
+
+const poppins = Poppins({
+  subsets: ["latin"],
+  weight: ["700", "800"],
+  variable: "--font-heading",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: "Bhinekaled — Aksesoris Lighting Kendaraan",
@@ -20,7 +29,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="id" className="h-full antialiased">
+    <html lang="id" className={`h-full antialiased ${inter.variable} ${poppins.variable}`}>
       <body className="min-h-full flex flex-col font-sans">{children}</body>
     </html>
   );

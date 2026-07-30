@@ -24,7 +24,7 @@ export default function StorefrontError({
       <button
         type="button"
         onClick={reset}
-        className="rounded-full bg-brand-red px-5 py-2 text-sm font-semibold text-white hover:bg-red-700"
+        className="rounded-full bg-brand-red px-5 py-2 text-sm font-semibold text-white hover:bg-brand-red-hover"
       >
         Coba Lagi
       </button>

@@ -125,7 +125,8 @@ export function ProductImageManager({ images, onChange, deletedImages, onDeleted
                 value={image.altText}
                 onChange={(e) => updateAltText(index, e.target.value)}
                 placeholder="Alt text (opsional)"
-                className="rounded-md border border-neutral-300 px-2 py-1 text-xs focus:border-brand-red focus:outline-none"
+                aria-label="Alt text gambar"
+                className="rounded-md border border-neutral-300 px-2 py-1 text-xs focus:border-brand-red focus:outline-none focus:ring-1 focus:ring-brand-red"
               />
               <div className="flex items-center justify-between text-xs">
                 <div className="flex gap-1">
@@ -133,6 +134,7 @@ export function ProductImageManager({ images, onChange, deletedImages, onDeleted
                     type="button"
                     onClick={() => moveImage(index, -1)}
                     disabled={index === 0}
+                    aria-label="Pindahkan gambar ke atas"
                     className="rounded border border-neutral-300 px-2 py-0.5 text-neutral-600 disabled:opacity-40"
                   >
                     ↑
@@ -141,12 +143,18 @@ export function ProductImageManager({ images, onChange, deletedImages, onDeleted
                     type="button"
                     onClick={() => moveImage(index, 1)}
                     disabled={index === images.length - 1}
+                    aria-label="Pindahkan gambar ke bawah"
                     className="rounded border border-neutral-300 px-2 py-0.5 text-neutral-600 disabled:opacity-40"
                   >
                     ↓
                   </button>
                 </div>
-                <button type="button" onClick={() => removeImage(index)} className="text-neutral-500 hover:text-red-600">
+                <button
+                  type="button"
+                  onClick={() => removeImage(index)}
+                  aria-label="Hapus gambar"
+                  className="text-neutral-500 hover:text-red-600"
+                >
                   Hapus
                 </button>
               </div>

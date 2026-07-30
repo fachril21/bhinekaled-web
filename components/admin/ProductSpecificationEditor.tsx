@@ -35,13 +35,15 @@ export function ProductSpecificationEditor({ rows, onChange }: ProductSpecificat
             value={row.key}
             onChange={(e) => updateRow(index, "key", e.target.value)}
             placeholder="Nama (mis. watt)"
-            className="w-1/3 rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-brand-red focus:outline-none"
+            aria-label="Nama spesifikasi"
+            className="w-1/3 rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-brand-red focus:outline-none focus:ring-1 focus:ring-brand-red"
           />
           <input
             value={row.value}
             onChange={(e) => updateRow(index, "value", e.target.value)}
             placeholder="Nilai (mis. 35)"
-            className="flex-1 rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-brand-red focus:outline-none"
+            aria-label="Nilai spesifikasi"
+            className="flex-1 rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-brand-red focus:outline-none focus:ring-1 focus:ring-brand-red"
           />
           <button
             type="button"

@@ -43,7 +43,7 @@ export function PayNowButton({ orderNumber }: PayNowButtonProps) {
         type="button"
         onClick={handleClick}
         disabled={isPending}
-        className="w-full rounded-full bg-brand-red px-4 py-2.5 text-center text-sm font-semibold text-white transition hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-60"
+        className="w-full rounded-full bg-brand-red px-4 py-2.5 text-center text-sm font-semibold text-white transition hover:bg-brand-red-hover disabled:cursor-not-allowed disabled:opacity-60"
       >
         {isPending ? "Menyiapkan pembayaran..." : "Bayar Sekarang"}
       </button>

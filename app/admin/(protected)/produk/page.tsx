@@ -51,7 +51,7 @@ export default async function Page({ searchParams }: ProdukPageProps) {
           id="status-filter"
           name="status"
           defaultValue={status}
-          className="rounded-md border border-neutral-300 px-3 py-1.5 text-sm focus:border-brand-red focus:outline-none"
+          className="rounded-md border border-neutral-300 px-3 py-1.5 text-sm focus:border-brand-red focus:outline-none focus:ring-1 focus:ring-brand-red"
         >
           {STATUS_FILTER_OPTIONS.map((opt) => (
             <option key={opt.value} value={opt.value}>

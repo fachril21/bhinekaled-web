@@ -30,7 +30,7 @@ export function VehicleCompatibilityEditor({ values, onChange }: VehicleCompatib
             value={value}
             onChange={(e) => updateValue(index, e.target.value)}
             placeholder="Mis. Honda Vario 125/150"
-            className="flex-1 rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-brand-red focus:outline-none"
+            className="flex-1 rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-brand-red focus:outline-none focus:ring-1 focus:ring-brand-red"
           />
           <button
             type="button"

@@ -1,0 +1,137 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-07-30T00:00:00.000Z",
+  "title": "Design System: BHINEKALED",
+  "extensions": {
+    "colorMeta": {
+      "primary": {
+        "role": "primary",
+        "displayName": "Signal Red",
+        "canonical": "#e6212a",
+        "tonalRamp": ["#4d0a0d", "#7a1015", "#a11419", "#c81820", "#e6212a", "#ea4a52", "#f07d83", "#f7b3b7"]
+      },
+      "primary-hover": {
+        "role": "primary",
+        "displayName": "Signal Red, Pressed",
+        "canonical": "#bd1b22",
+        "tonalRamp": ["#3d0808", "#63100f", "#821412", "#a21815", "#bd1b22", "#c94047", "#d97278", "#eaa8ab"]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Ink Black",
+        "canonical": "#1a1a1a",
+        "tonalRamp": ["#0a0a0a", "#1a1a1a", "#2e2e2e", "#454545", "#5c5c5c", "#757575", "#9e9e9e", "#c7c7c7"]
+      },
+      "surface": {
+        "role": "neutral",
+        "displayName": "Warm Ash",
+        "canonical": "#f5f5f4",
+        "tonalRamp": ["#57564f", "#706f68", "#8a8880", "#a5a39a", "#c1bfb5", "#d8d6cd", "#e8e7e0", "#f5f5f4"]
+      },
+      "border": {
+        "role": "neutral",
+        "displayName": "Hairline Border",
+        "canonical": "#e5e5e5"
+      },
+      "text-muted": {
+        "role": "neutral",
+        "displayName": "Muted Text",
+        "canonical": "#737373"
+      },
+      "status-pending": { "role": "tertiary", "displayName": "Pending Amber", "canonical": "#b45309" },
+      "status-success": { "role": "tertiary", "displayName": "Success Green", "canonical": "#15803d" },
+      "status-progress": { "role": "tertiary", "displayName": "In-Progress Blue", "canonical": "#1d4ed8" }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "Hero headline only (single per page)." },
+      "headline": { "displayName": "Headline", "purpose": "Section headings across storefront and admin." },
+      "body": { "displayName": "Body", "purpose": "Default UI, table, and content text." },
+      "label": { "displayName": "Label", "purpose": "Buttons, badges, form labels, table headers." }
+    },
+    "shadows": [
+      { "name": "card-rest", "value": "0 1px 2px 0 rgb(0 0 0 / 0.05)", "purpose": "Default resting elevation for storefront (Persuade) cards: product cards, category tiles, promo panels. Always present, not hover-only." },
+      { "name": "card-hover", "value": "0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)", "purpose": "Hover/focus lift for storefront cards, paired with a small upward translate — real tactile weight." },
+      { "name": "panel-md", "value": "0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)", "purpose": "Floating/overlay context (e.g. a filter panel) that needs to read as sitting above the page." }
+    ],
+    "motion": [
+      { "name": "default-transition", "value": "150ms ease", "purpose": "Tailwind's default `transition` utility — used for color/background hover state changes on buttons, links, and cards. No custom easing curve is defined; the system does not use bespoke motion." }
+    ],
+    "breakpoints": [
+      { "name": "sm", "value": "640px" },
+      { "name": "md", "value": "768px" },
+      { "name": "lg", "value": "1024px" },
+      { "name": "xl", "value": "1280px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Signal-red pill CTA — the highest-commitment action on a screen (add to cart, pay now, submit).",
+      "html": "<button class=\"ds-btn-primary\" type=\"button\">Tambah ke Keranjang</button>",
+      "css": ".ds-btn-primary { background: #e6212a; color: #ffffff; font-family: Inter, Helvetica, Arial, sans-serif; font-size: 0.875rem; font-weight: 600; padding: 10px 24px; border: none; border-radius: 9999px; cursor: pointer; transition: background 150ms ease; } .ds-btn-primary:hover { background: #bd1b22; } .ds-btn-primary:focus-visible { outline: none; box-shadow: 0 0 0 2px #ffffff, 0 0 0 4px #e6212a; } .ds-btn-primary:disabled { background: #d4d4d4; color: #a3a3a3; cursor: not-allowed; }"
+    },
+    {
+      "name": "Text Input",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Standard bordered text field used across storefront forms and admin CRUD — border shifts to Signal Red on focus, always paired with a visible ring.",
+      "html": "<input class=\"ds-input\" type=\"text\" placeholder=\"Nama produk\" />",
+      "css": ".ds-input { background: #ffffff; color: #171717; font-family: Inter, Helvetica, Arial, sans-serif; font-size: 0.875rem; padding: 8px 12px; border: 1px solid #d4d4d4; border-radius: 8px; width: 100%; box-sizing: border-box; transition: border-color 150ms ease, box-shadow 150ms ease; } .ds-input:focus { outline: none; border-color: #e6212a; box-shadow: 0 0 0 1px #e6212a; } .ds-input::placeholder { color: #a3a3a3; }"
+    },
+    {
+      "name": "Product Card",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "Clickable product tile — flat at rest, a subtle shadow lift on hover confirms interactivity without simulating physical elevation.",
+      "html": "<a class=\"ds-card\" href=\"#\"><div class=\"ds-card-media\"></div><div class=\"ds-card-body\"><span class=\"ds-card-title\">Lampu LED H4 6000K</span><span class=\"ds-card-price\">Rp185.000</span></div></a>",
+      "css": ".ds-card { display: block; background: #ffffff; border: 1px solid #e5e5e5; border-radius: 12px; overflow: hidden; text-decoration: none; color: inherit; transition: box-shadow 150ms ease, border-color 150ms ease; } .ds-card:hover { box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05); border-color: #e6212a; } .ds-card-media { aspect-ratio: 1 / 1; background: #f5f5f4; } .ds-card-body { padding: 12px; display: flex; flex-direction: column; gap: 4px; } .ds-card-title { font-family: Inter, Helvetica, Arial, sans-serif; font-size: 0.875rem; font-weight: 500; color: #171717; } .ds-card-price { font-family: Poppins, Helvetica, Arial, sans-serif; font-size: 0.875rem; font-weight: 700; color: #e6212a; }"
+    },
+    {
+      "name": "Status Badge",
+      "kind": "chip",
+      "refersTo": "badge-status",
+      "description": "Fixed color-per-status pill used for order status, payment status, and active/archived state across every admin table — semantic, never brand red.",
+      "html": "<span class=\"ds-badge ds-badge-success\">Selesai</span>",
+      "css": ".ds-badge { display: inline-flex; align-items: center; font-family: Inter, Helvetica, Arial, sans-serif; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.02em; padding: 2px 10px; border-radius: 9999px; } .ds-badge-success { background: #dcfce7; color: #15803d; } .ds-badge-pending { background: #fef3c7; color: #b45309; } .ds-badge-progress { background: #dbeafe; color: #1d4ed8; }"
+    },
+    {
+      "name": "Section Heading Accent",
+      "kind": "custom",
+      "refersTo": "section-heading",
+      "description": "Signature small red bar above a section heading — the system's controlled, minimal echo of the logo's sunburst/bar device. Signature component: not a generic pattern.",
+      "html": "<div class=\"ds-section-heading\"><span class=\"ds-heading-accent\" aria-hidden=\"true\"></span><h2>Produk Terbaru</h2></div>",
+      "css": ".ds-section-heading { display: flex; flex-direction: column; } .ds-heading-accent { display: block; height: 4px; width: 40px; margin-bottom: 8px; border-radius: 9999px; background: #e6212a; } .ds-section-heading h2 { font-family: Poppins, Helvetica, Arial, sans-serif; font-size: 1.5rem; font-weight: 700; color: #171717; margin: 0; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "High Beam",
+    "overview": "BHINEKALED reads like a headlight cutting through the dark: high-contrast, direct, no ambiguity about where to look. The system is built almost entirely flat — near-black text and near-white surfaces, with signal red used sparingly as the one thing that must never be missed (a price, a CTA, an active state). It doesn't reach for gradients, glass, or layered shadows to feel modern; confidence comes from restraint, generous rounding, and a single loud color used with discipline.\n\nThe system draws directly from the logo: a bold rounded wordmark, a white outline holding red back from the edge, and a sunburst motif standing in for \"menyala\" — the sense of something switching on. Section accents (the short red bar above headings) are a deliberately small, controlled echo of that sunburst/bar device, not a decorative flourish invented from scratch.",
+    "keyCharacteristics": [
+      "Two elevation registers by mode: storefront (Persuade) surfaces are tactile — product/category cards carry real resting shadow and lift further on hover; admin (Operate) surfaces stay flat and bordered for scanability and density.",
+      "One brand red, used with confidence: large-scale hero/banner fills and promo tiles on the storefront, plus every CTA, price, and active state — still never diluted into a secondary accent color.",
+      "Generous, consistent rounding (pill buttons, rounded-lg/rounded-xl cards) — sharp 90° corners are treated as off-brand, not just unstyled.",
+      "A separate, semantic status-color layer (amber/green/blue) exists alongside the brand palette for order and payment states — those hues are functional, not brand accents, and must not be confused with or replace brand red."
+    ],
+    "rules": [
+      { "name": "The One Red Rule", "body": "Signal Red is the only red anywhere in the interface — destructive actions, CTA hovers, hero fills, promo tiles, and every red-adjacent state derive from #e6212a/#bd1b22, never from Tailwind's stock red-* scale or a second accent hue. Bold, page-scale use is welcome on storefront surfaces; what's never welcome is a second color trying to do the same job.", "section": "colors" },
+      { "name": "The Two-Family Rule", "body": "Exactly two font families exist in the system (Poppins for headings, Inter for everything else). A third family is never introduced for \"emphasis\" — weight and the display/body split carry all the hierarchy the system needs.", "section": "typography" },
+      { "name": "The Two-Register Rule", "body": "Elevation follows mode, not screen-by-screen taste: every storefront card rests on shadow-sm and lifts to shadow-lg on hover; every admin panel stays flat and bordered at every state. Moving a component between modes without re-deciding its elevation is a defect, not a style choice.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do use Signal Red (#e6212a) as the only red in the interface, including hover and destructive states — always via the brand-red/brand-red-hover tokens, never a raw hex or stock Tailwind red.",
+      "Do give storefront cards a resting shadow-sm that lifts to shadow-lg on hover — depth is a tactile shopping cue there, not an occasional accent.",
+      "Do keep admin surfaces flat and bordered at every state — the Two-Register Rule applies in both directions.",
+      "Do keep every focusable control's focus:outline-none paired with focus:ring-1 focus:ring-brand-red — never strip the outline without replacing it.",
+      "Do use the amber/green/blue status palette exclusively for order/payment/active-state communication, kept visually distinct from brand red so \"urgent action\" and \"current status\" are never confused.",
+      "Do round generously and consistently (pill for actions/status, rounded-lg+ for containers, rounded-md for form controls) — this is a brand commitment from the logo, not a default to soften later."
+    ],
+    "donts": [
+      "Don't introduce a second accent color \"just for variety\" — the system's confidence comes from one brand hue used boldly, not from adding hues.",
+      "Don't add resting shadows to admin panels, badges, or buttons — the tactile register is a storefront-only device.",
+      "Don't use sharp, unrounded corners anywhere a rounded equivalent is available — this directly contradicts the logo's rounded, bold character.",
+      "Don't introduce a third font family. Poppins carries all display/heading weight; Inter carries everything else."
+    ]
+  }
+}

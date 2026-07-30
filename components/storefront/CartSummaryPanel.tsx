@@ -18,7 +18,7 @@ export function CartSummaryPanel({ subtotal, hasAvailableItems }: CartSummaryPan
       {hasAvailableItems ? (
         <Link
           href="/checkout"
-          className="mt-4 block w-full rounded-full bg-brand-red px-4 py-2.5 text-center text-sm font-semibold text-white transition hover:bg-red-700"
+          className="mt-4 block w-full rounded-full bg-brand-red px-4 py-2.5 text-center text-sm font-semibold text-white transition hover:bg-brand-red-hover"
         >
           Lanjut ke Checkout
         </Link>

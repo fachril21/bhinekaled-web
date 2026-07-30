@@ -32,7 +32,7 @@ export function CartQuantityStepper({ cartItemId, qty, availableStock }: CartQua
           value={qty - 1}
           disabled={isPending}
           aria-label={qty <= 1 ? "Hapus item" : "Kurangi jumlah"}
-          className="px-3 py-1.5 text-neutral-600 disabled:opacity-40"
+          className="flex min-h-11 min-w-11 items-center justify-center px-3 text-neutral-600 disabled:opacity-40"
         >
           −
         </button>
@@ -43,7 +43,7 @@ export function CartQuantityStepper({ cartItemId, qty, availableStock }: CartQua
           value={qty + 1}
           disabled={isPending || qty >= availableStock}
           aria-label="Tambah jumlah"
-          className="px-3 py-1.5 text-neutral-600 disabled:opacity-40"
+          className="flex min-h-11 min-w-11 items-center justify-center px-3 text-neutral-600 disabled:opacity-40"
         >
           +
         </button>

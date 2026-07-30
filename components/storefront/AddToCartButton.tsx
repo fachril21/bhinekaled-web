@@ -35,7 +35,7 @@ export function AddToCartButton({
         <button
           type="submit"
           disabled={disabled || isPending}
-          className="w-full rounded-full bg-brand-red px-4 py-2 text-sm font-semibold text-white transition hover:bg-red-700 disabled:cursor-not-allowed disabled:bg-neutral-300"
+          className="w-full rounded-full bg-brand-red px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-red-hover disabled:cursor-not-allowed disabled:bg-neutral-300"
         >
           {disabled ? "Stok Habis" : isPending ? "Menambahkan..." : "+ Keranjang"}
         </button>

@@ -77,7 +77,7 @@ export function FeeForm({ mode, initialFee, onSaved, onCancelEdit }: FeeFormProp
             value={label}
             onChange={(e) => setLabel(e.target.value)}
             required
-            className="rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-brand-red focus:outline-none"
+            className="rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-brand-red focus:outline-none focus:ring-1 focus:ring-brand-red"
           />
         </div>
 
@@ -89,7 +89,7 @@ export function FeeForm({ mode, initialFee, onSaved, onCancelEdit }: FeeFormProp
             id="fee-type"
             value={feeType}
             onChange={(e) => setFeeType(e.target.value as FeeType)}
-            className="rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-brand-red focus:outline-none"
+            className="rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-brand-red focus:outline-none focus:ring-1 focus:ring-brand-red"
           >
             <option value="flat">Nominal Tetap (Flat)</option>
             <option value="percentage">Persentase</option>
@@ -108,7 +108,7 @@ export function FeeForm({ mode, initialFee, onSaved, onCancelEdit }: FeeFormProp
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
             required
-            className="rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-brand-red focus:outline-none"
+            className="rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-brand-red focus:outline-none focus:ring-1 focus:ring-brand-red"
           />
         </div>
       </div>

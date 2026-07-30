@@ -80,7 +80,7 @@ export function CategoryForm({ mode, initialCategory, categories, onSaved, onCan
             value={name}
             onChange={(e) => handleNameChange(e.target.value)}
             required
-            className="rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-brand-red focus:outline-none"
+            className="rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-brand-red focus:outline-none focus:ring-1 focus:ring-brand-red"
           />
         </div>
 
@@ -96,7 +96,7 @@ export function CategoryForm({ mode, initialCategory, categories, onSaved, onCan
               setSlug(e.target.value);
             }}
             required
-            className="rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-brand-red focus:outline-none"
+            className="rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-brand-red focus:outline-none focus:ring-1 focus:ring-brand-red"
           />
         </div>
 
@@ -108,7 +108,7 @@ export function CategoryForm({ mode, initialCategory, categories, onSaved, onCan
             id="category-parent"
             value={parentId}
             onChange={(e) => setParentId(e.target.value)}
-            className="rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-brand-red focus:outline-none"
+            className="rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-brand-red focus:outline-none focus:ring-1 focus:ring-brand-red"
           >
             <option value="">Tidak ada (top-level)</option>
             {parentOptions.map((c) => (

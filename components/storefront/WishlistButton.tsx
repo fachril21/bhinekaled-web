@@ -35,7 +35,7 @@ export function WishlistButton({ productId, initialIsWishlisted }: WishlistButto
           disabled={isPending}
           aria-label={isWishlisted ? "Hapus dari wishlist" : "Simpan ke wishlist"}
           aria-pressed={isWishlisted}
-          className={`flex h-9 w-9 items-center justify-center rounded-full border border-neutral-200 bg-white/90 shadow-sm transition ${
+          className={`flex h-11 w-11 items-center justify-center rounded-full border border-neutral-200 bg-white/90 shadow-sm transition ${
             isWishlisted ? "text-brand-red" : "text-neutral-500 hover:text-brand-red"
           }`}
         >

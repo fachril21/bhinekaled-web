@@ -48,7 +48,7 @@ export function ProductFilterBar({
   return (
     <aside className="space-y-6">
       {showCategoryFilter && (
-        <div className="rounded-xl border border-neutral-200 p-4">
+        <div className="rounded-xl border border-neutral-200 bg-white p-4 shadow-sm">
           <h3 className="mb-3 text-sm font-semibold text-neutral-900">Kategori</h3>
           <ul className="space-y-1 text-sm">
             <li>
@@ -84,7 +84,7 @@ export function ProductFilterBar({
         </div>
       )}
 
-      <div className="rounded-xl border border-neutral-200 p-4">
+      <div className="rounded-xl border border-neutral-200 bg-white p-4 shadow-sm">
         <h3 className="mb-3 text-sm font-semibold text-neutral-900">Harga Maksimal</h3>
         <input
           type="range"
@@ -104,7 +104,7 @@ export function ProductFilterBar({
         </p>
       </div>
 
-      <div className="rounded-xl border border-neutral-200 p-4">
+      <div className="rounded-xl border border-neutral-200 bg-white p-4 shadow-sm">
         <label htmlFor="product-sort" className="mb-2 block text-sm font-semibold text-neutral-900">
           Urutkan
         </label>

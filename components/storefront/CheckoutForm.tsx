@@ -188,7 +188,7 @@ export function CheckoutForm({ items, subtotal, fees }: CheckoutFormProps) {
         <button
           type="submit"
           disabled={isPending || !selectedShipping}
-          className="w-full rounded-full bg-brand-red px-4 py-2.5 text-center text-sm font-semibold text-white transition hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-60"
+          className="w-full rounded-full bg-brand-red px-4 py-2.5 text-center text-sm font-semibold text-white transition hover:bg-brand-red-hover disabled:cursor-not-allowed disabled:opacity-60"
         >
           {isPending ? "Memproses..." : "Buat Pesanan"}
         </button>

@@ -152,7 +152,7 @@ export function ProductForm({ mode, categories, initialProduct }: ProductFormPro
             value={name}
             onChange={(e) => handleNameChange(e.target.value)}
             required
-            className="rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-brand-red focus:outline-none"
+            className="rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-brand-red focus:outline-none focus:ring-1 focus:ring-brand-red"
           />
           {fieldErrors.name && <p className="text-xs text-red-600">{fieldErrors.name}</p>}
         </div>
@@ -169,7 +169,7 @@ export function ProductForm({ mode, categories, initialProduct }: ProductFormPro
               setSlug(e.target.value);
             }}
             required
-            className="rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-brand-red focus:outline-none"
+            className="rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-brand-red focus:outline-none focus:ring-1 focus:ring-brand-red"
           />
           {fieldErrors.slug && <p className="text-xs text-red-600">{fieldErrors.slug}</p>}
         </div>
@@ -184,7 +184,7 @@ export function ProductForm({ mode, categories, initialProduct }: ProductFormPro
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           rows={4}
-          className="rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-brand-red focus:outline-none"
+          className="rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-brand-red focus:outline-none focus:ring-1 focus:ring-brand-red"
         />
       </div>
 
@@ -197,7 +197,7 @@ export function ProductForm({ mode, categories, initialProduct }: ProductFormPro
             id="product-category"
             value={categoryId}
             onChange={(e) => setCategoryId(e.target.value)}
-            className="rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-brand-red focus:outline-none"
+            className="rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-brand-red focus:outline-none focus:ring-1 focus:ring-brand-red"
           >
             <option value="">Tanpa kategori</option>
             {categories.map((c) => (
@@ -216,7 +216,7 @@ export function ProductForm({ mode, categories, initialProduct }: ProductFormPro
             id="product-status"
             value={status}
             onChange={(e) => setStatus(e.target.value as ProductStatus)}
-            className="rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-brand-red focus:outline-none"
+            className="rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-brand-red focus:outline-none focus:ring-1 focus:ring-brand-red"
           >
             {STATUS_OPTIONS.map((opt) => (
               <option key={opt.value} value={opt.value}>
@@ -236,7 +236,7 @@ export function ProductForm({ mode, categories, initialProduct }: ProductFormPro
             onChange={(e) => setBasePrice(e.target.value)}
             inputMode="numeric"
             required
-            className="rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-brand-red focus:outline-none"
+            className="rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-brand-red focus:outline-none focus:ring-1 focus:ring-brand-red"
           />
         </div>
 
@@ -250,7 +250,7 @@ export function ProductForm({ mode, categories, initialProduct }: ProductFormPro
             onChange={(e) => setStock(e.target.value)}
             inputMode="numeric"
             required
-            className="rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-brand-red focus:outline-none"
+            className="rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-brand-red focus:outline-none focus:ring-1 focus:ring-brand-red"
           />
         </div>
 
@@ -264,7 +264,7 @@ export function ProductForm({ mode, categories, initialProduct }: ProductFormPro
             onChange={(e) => setWeightGram(e.target.value)}
             inputMode="numeric"
             required
-            className="rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-brand-red focus:outline-none"
+            className="rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-brand-red focus:outline-none focus:ring-1 focus:ring-brand-red"
           />
         </div>
       </div>
@@ -296,7 +296,7 @@ export function ProductForm({ mode, categories, initialProduct }: ProductFormPro
             id="product-meta-title"
             value={metaTitle}
             onChange={(e) => setMetaTitle(e.target.value)}
-            className="rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-brand-red focus:outline-none"
+            className="rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-brand-red focus:outline-none focus:ring-1 focus:ring-brand-red"
           />
         </div>
         <div className="flex flex-col gap-1">
@@ -307,7 +307,7 @@ export function ProductForm({ mode, categories, initialProduct }: ProductFormPro
             id="product-meta-description"
             value={metaDescription}
             onChange={(e) => setMetaDescription(e.target.value)}
-            className="rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-brand-red focus:outline-none"
+            className="rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-brand-red focus:outline-none focus:ring-1 focus:ring-brand-red"
           />
         </div>
       </div>
