@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import type { CategorySummary } from "@/lib/queries/categories";
 
@@ -11,8 +12,8 @@ export function Footer({ categories }: FooterProps) {
       <div className="mx-auto max-w-6xl px-4 py-12">
         <div className="grid gap-10 sm:grid-cols-3">
           <div>
-            <span className="inline-block rounded-md bg-brand-red px-3 py-1.5 text-base font-extrabold text-white">
-              BHINEKALED
+            <span className="inline-block rounded-lg bg-white p-2">
+              <Image src="/bhinekaled-logo.webp" alt="BHINEKALED" width={1600} height={448} className="h-9 w-auto" />
             </span>
             <p className="mt-4 max-w-xs text-sm leading-relaxed text-neutral-400">
               Spesialis lampu LED dan aksesoris pencahayaan kendaraan. Produk berkualitas, harga

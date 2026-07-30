@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { ProductSearchInput } from "@/components/storefront/ProductSearchInput";
 import type { CategorySummary } from "@/lib/queries/categories";
@@ -12,11 +13,15 @@ export function Header({ categories, cartCount = 0, wishlistCount = 0 }: HeaderP
   return (
     <header className="sticky top-0 z-40 border-b border-neutral-200 bg-white">
       <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-3 px-4 py-3 sm:gap-4">
-        <Link
-          href="/"
-          className="shrink-0 rounded-md bg-brand-red px-3 py-1.5 text-base font-extrabold tracking-tight text-white sm:text-lg"
-        >
-          BHINEKALED
+        <Link href="/" className="shrink-0">
+          <Image
+            src="/bhinekaled-logo.webp"
+            alt="BHINEKALED"
+            width={1600}
+            height={448}
+            priority
+            className="h-9 w-auto sm:h-10"
+          />
         </Link>
 
         <div className="order-3 w-full sm:order-none sm:max-w-xs sm:flex-1">
@@ -33,11 +38,19 @@ export function Header({ categories, cartCount = 0, wishlistCount = 0 }: HeaderP
               {category.name}
             </Link>
           ))}
-          <Link href="/wishlist" aria-label="Wishlist" className="relative hover:text-brand-red">
+          <Link
+            href="/wishlist"
+            aria-label="Wishlist"
+            className="relative -m-2 flex h-11 w-11 items-center justify-center hover:text-brand-red"
+          >
             <HeartIcon />
             {wishlistCount > 0 && <CountBadge count={wishlistCount} />}
           </Link>
-          <Link href="/cart" aria-label="Keranjang belanja" className="relative hover:text-brand-red">
+          <Link
+            href="/cart"
+            aria-label="Keranjang belanja"
+            className="relative -m-2 flex h-11 w-11 items-center justify-center hover:text-brand-red"
+          >
             <CartIcon />
             {cartCount > 0 && <CountBadge count={cartCount} />}
           </Link>

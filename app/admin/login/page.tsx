@@ -6,6 +6,7 @@
 // "belum auth -> /admin/login" akan memicu redirect loop ke dirinya
 // sendiri (lihat Temuan #1 plan tsb).
 
+import Image from "next/image";
 import { redirect } from "next/navigation";
 import { getAdminSession } from "@/lib/auth/admin-session";
 import { LoginForm } from "@/components/admin/LoginForm";
@@ -17,9 +18,13 @@ export default async function Page() {
   return (
     <main className="mx-auto flex min-h-screen max-w-sm flex-col justify-center px-4 py-16">
       <div className="mb-8 text-center">
-        <p className="inline-block rounded-md bg-brand-red px-3 py-1.5 text-lg font-extrabold tracking-tight text-white">
-          BHINEKALED
-        </p>
+        <Image
+          src="/bhinekaled-logo.webp"
+          alt="BHINEKALED"
+          width={1600}
+          height={448}
+          className="mx-auto h-10 w-auto"
+        />
         <h1 className="mt-4 text-xl font-bold text-neutral-900">Login Admin</h1>
       </div>
       <LoginForm />
