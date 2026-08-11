@@ -36,11 +36,11 @@ export function AdminOrderPagination({ currentPage, totalPages, basePath, query 
   const nextDisabled = clampedCurrent >= totalPages;
 
   return (
-    <nav aria-label="Navigasi halaman" className="mt-6 flex items-center justify-center gap-2 text-sm">
+    <nav aria-label="Navigasi halaman" className="mt-6 flex items-center justify-center gap-2.5 text-sm">
       <PaginationLink href={hrefForPage(clampedCurrent - 1)} disabled={prevDisabled}>
         Sebelumnya
       </PaginationLink>
-      <span className="px-3 text-neutral-600">
+      <span className="px-3 text-gray-500">
         Halaman {currentPage} dari {totalPages}
       </span>
       <PaginationLink href={hrefForPage(clampedCurrent + 1)} disabled={nextDisabled}>
@@ -51,18 +51,12 @@ export function AdminOrderPagination({ currentPage, totalPages, basePath, query 
 }
 
 function PaginationLink({ href, disabled, children }: { href: string; disabled: boolean; children: ReactNode }) {
+  const baseClass = "flex h-10 items-center justify-center rounded-lg border px-3.5 text-gray-700 shadow-theme-xs";
   if (disabled) {
-    return (
-      <span className="cursor-not-allowed rounded-lg border border-neutral-200 px-3 py-1.5 text-neutral-300">
-        {children}
-      </span>
-    );
+    return <span className={`${baseClass} cursor-not-allowed border-gray-200 text-gray-300`}>{children}</span>;
   }
   return (
-    <Link
-      href={href}
-      className="rounded-lg border border-neutral-300 px-3 py-1.5 hover:border-brand-red hover:text-brand-red"
-    >
+    <Link href={href} className={`${baseClass} border-gray-300 bg-white hover:bg-gray-50`}>
       {children}
     </Link>
   );

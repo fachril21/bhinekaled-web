@@ -16,18 +16,21 @@ export default async function Page() {
   if (session) redirect("/admin");
 
   return (
-    <main className="mx-auto flex min-h-screen max-w-sm flex-col justify-center px-4 py-16">
-      <div className="mb-8 text-center">
-        <Image
-          src="/bhinekaled-logo.webp"
-          alt="BHINEKALED"
-          width={1600}
-          height={448}
-          className="mx-auto h-10 w-auto"
-        />
-        <h1 className="mt-4 text-xl font-bold text-neutral-900">Login Admin</h1>
+    <main className="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-16">
+      <div className="w-full max-w-md rounded-2xl border border-gray-200 bg-white p-8 shadow-theme-md">
+        <div className="mb-8 text-center">
+          <Image
+            src="/bhinekaled-logo.webp"
+            alt="BHINEKALED"
+            width={1600}
+            height={448}
+            className="mx-auto h-10 w-auto"
+          />
+          <h1 className="mt-5 text-title-sm font-semibold text-gray-800">Login Admin</h1>
+          <p className="mt-1 text-sm text-gray-500">Masuk untuk mengelola toko Bhinekaled.</p>
+        </div>
+        <LoginForm />
       </div>
-      <LoginForm />
     </main>
   );
 }

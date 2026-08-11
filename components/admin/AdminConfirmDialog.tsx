@@ -6,8 +6,9 @@
 // Native <dialog> — modal, focus-trap, dan backdrop sudah ditangani bawaan
 // browser modern, tidak perlu dependency portal/focus-trap tambahan.
 
-import { useEffect, useRef } from "react";
 import type { ReactNode } from "react";
+import { Modal } from "@/components/admin/ui/Modal";
+import { Button } from "@/components/admin/ui/Button";
 
 type AdminConfirmDialogProps = {
   open: boolean;
@@ -28,43 +29,20 @@ export function AdminConfirmDialog({
   onCancel,
   isPending = false,
 }: AdminConfirmDialogProps) {
-  const ref = useRef<HTMLDialogElement>(null);
-
-  useEffect(() => {
-    const dialog = ref.current;
-    if (!dialog) return;
-    if (open && !dialog.open) dialog.showModal();
-    if (!open && dialog.open) dialog.close();
-  }, [open]);
-
   return (
-    <dialog
-      ref={ref}
-      onCancel={onCancel}
-      className="w-full max-w-md rounded-xl border border-neutral-200 p-0 backdrop:bg-black/40"
-    >
+    <Modal isOpen={open} onClose={onCancel} className="max-w-md" showCloseButton={false}>
       <div className="flex flex-col gap-4 p-6">
-        <h2 className="text-lg font-semibold text-neutral-900">{title}</h2>
-        <div className="text-sm text-neutral-600">{description}</div>
+        <h2 className="text-lg font-semibold text-gray-800">{title}</h2>
+        <div className="text-sm text-gray-500">{description}</div>
         <div className="flex justify-end gap-3">
-          <button
-            type="button"
-            onClick={onCancel}
-            disabled={isPending}
-            className="rounded-md border border-neutral-300 px-4 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-50 disabled:opacity-60"
-          >
+          <Button variant="outline" onClick={onCancel} disabled={isPending}>
             Batal
-          </button>
-          <button
-            type="button"
-            onClick={onConfirm}
-            disabled={isPending}
-            className="rounded-md bg-brand-red px-4 py-2 text-sm font-semibold text-white hover:bg-brand-red-hover disabled:opacity-60"
-          >
+          </Button>
+          <Button variant="primary" onClick={onConfirm} disabled={isPending}>
             {isPending ? "Memproses..." : confirmLabel}
-          </button>
+          </Button>
         </div>
       </div>
-    </dialog>
+    </Modal>
   );
 }

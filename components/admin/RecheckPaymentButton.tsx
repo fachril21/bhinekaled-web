@@ -7,6 +7,7 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { recheckPaymentStatusAction } from "@/lib/actions/payments";
+import { Button } from "@/components/admin/ui/Button";
 
 type RecheckPaymentButtonProps = {
   orderId: string;
@@ -34,16 +35,11 @@ export function RecheckPaymentButton({ orderId }: RecheckPaymentButtonProps) {
 
   return (
     <div className="flex flex-col gap-2">
-      <button
-        type="button"
-        onClick={handleClick}
-        disabled={isPending}
-        className="self-start rounded-md border border-neutral-300 px-3 py-1.5 text-xs font-semibold text-neutral-700 hover:bg-neutral-50 disabled:cursor-not-allowed disabled:opacity-60"
-      >
+      <Button type="button" variant="outline" size="sm" onClick={handleClick} disabled={isPending} className="self-start">
         {isPending ? "Mengecek..." : "Cek Ulang Status Pembayaran"}
-      </button>
-      {error && <p className="text-xs text-red-600">{error}</p>}
-      {success && <p className="text-xs text-green-700">Status pembayaran berhasil diperbarui.</p>}
+      </Button>
+      {error && <p className="text-xs text-error-600">{error}</p>}
+      {success && <p className="text-xs text-success-600">Status pembayaran berhasil diperbarui.</p>}
     </div>
   );
 }

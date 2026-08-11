@@ -7,6 +7,11 @@ import { useState } from "react";
 import Image from "next/image";
 import { isUnoptimizedImage } from "@/lib/image";
 import { uploadProductImage } from "@/lib/storage/upload-product-image";
+import { Label } from "@/components/admin/ui/form/Label";
+import { Input } from "@/components/admin/ui/form/Input";
+import { FileInput } from "@/components/admin/ui/form/FileInput";
+import { Button } from "@/components/admin/ui/Button";
+import { Alert } from "@/components/admin/ui/Alert";
 
 export type ManagedImage = {
   id?: string;
@@ -84,34 +89,32 @@ export function ProductImageManager({ images, onChange, deletedImages, onDeleted
   }
 
   return (
-    <div className="flex flex-col gap-3">
-      <label className="text-sm font-medium text-neutral-700">Gambar Produk</label>
+    <div className="flex flex-col gap-4 rounded-2xl border border-gray-200 bg-white p-5 md:p-6">
+      <h2 className="text-base font-semibold text-gray-800">Gambar Produk</h2>
 
-      <input
-        type="file"
-        multiple
-        accept="image/jpeg,image/png,image/webp"
-        disabled={isUploading}
-        onChange={(e) => {
-          void handleFilesSelected(e.target.files);
-          e.target.value = "";
-        }}
-        className="text-sm"
-      />
-      {isUploading && <p className="text-xs text-neutral-500">Mengupload...</p>}
+      <div>
+        <Label htmlFor="product-images">Upload gambar</Label>
+        <FileInput
+          id="product-images"
+          multiple
+          accept="image/jpeg,image/png,image/webp"
+          disabled={isUploading}
+          onChange={(e) => {
+            void handleFilesSelected(e.target.files);
+            e.target.value = "";
+          }}
+        />
+      </div>
+      {isUploading && <p className="text-xs text-gray-500">Mengupload...</p>}
       {uploadErrors.length > 0 && (
-        <ul className="list-disc pl-5 text-xs text-red-600">
-          {uploadErrors.map((error, i) => (
-            <li key={i}>{error}</li>
-          ))}
-        </ul>
+        <Alert variant="error" title="Sebagian gambar gagal diupload" message={uploadErrors.join(" ")} />
       )}
 
       {images.length > 0 && (
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
           {images.map((image, index) => (
-            <div key={image.id ?? image.url} className="flex flex-col gap-1 rounded-lg border border-neutral-200 p-2">
-              <div className="relative aspect-square overflow-hidden rounded-md bg-neutral-100">
+            <div key={image.id ?? image.url} className="flex flex-col gap-2 rounded-xl border border-gray-200 p-2">
+              <div className="relative aspect-square overflow-hidden rounded-lg bg-gray-100">
                 <Image
                   src={image.url}
                   alt={image.altText || "Gambar produk"}
@@ -121,12 +124,12 @@ export function ProductImageManager({ images, onChange, deletedImages, onDeleted
                   unoptimized={isUnoptimizedImage(image.url)}
                 />
               </div>
-              <input
+              <Input
                 value={image.altText}
                 onChange={(e) => updateAltText(index, e.target.value)}
                 placeholder="Alt text (opsional)"
                 aria-label="Alt text gambar"
-                className="rounded-md border border-neutral-300 px-2 py-1 text-xs focus:border-brand-red focus:outline-none focus:ring-1 focus:ring-brand-red"
+                className="!h-9 !px-2.5 !py-1.5 text-xs"
               />
               <div className="flex items-center justify-between text-xs">
                 <div className="flex gap-1">
@@ -135,7 +138,7 @@ export function ProductImageManager({ images, onChange, deletedImages, onDeleted
                     onClick={() => moveImage(index, -1)}
                     disabled={index === 0}
                     aria-label="Pindahkan gambar ke atas"
-                    className="rounded border border-neutral-300 px-2 py-0.5 text-neutral-600 disabled:opacity-40"
+                    className="rounded border border-gray-300 px-2 py-0.5 text-gray-600 disabled:opacity-40"
                   >
                     ↑
                   </button>
@@ -144,19 +147,20 @@ export function ProductImageManager({ images, onChange, deletedImages, onDeleted
                     onClick={() => moveImage(index, 1)}
                     disabled={index === images.length - 1}
                     aria-label="Pindahkan gambar ke bawah"
-                    className="rounded border border-neutral-300 px-2 py-0.5 text-neutral-600 disabled:opacity-40"
+                    className="rounded border border-gray-300 px-2 py-0.5 text-gray-600 disabled:opacity-40"
                   >
                     ↓
                   </button>
                 </div>
-                <button
+                <Button
                   type="button"
+                  variant="danger"
+                  size="sm"
                   onClick={() => removeImage(index)}
-                  aria-label="Hapus gambar"
-                  className="text-neutral-500 hover:text-red-600"
+                  className="!px-2 !py-1 text-xs"
                 >
                   Hapus
-                </button>
+                </Button>
               </div>
             </div>
           ))}

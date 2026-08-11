@@ -10,53 +10,31 @@
 
 import { useActionState } from "react";
 import { loginAction } from "@/lib/actions/auth";
+import { Label } from "@/components/admin/ui/form/Label";
+import { Input } from "@/components/admin/ui/form/Input";
+import { Button } from "@/components/admin/ui/Button";
+import { Alert } from "@/components/admin/ui/Alert";
 
 export function LoginForm() {
   const [state, action, pending] = useActionState(loginAction, undefined);
 
   return (
-    <form action={action} className="flex flex-col gap-4">
-      <div className="flex flex-col gap-1">
-        <label htmlFor="email" className="text-sm font-medium text-neutral-700">
-          Email
-        </label>
-        <input
-          id="email"
-          name="email"
-          type="email"
-          required
-          autoComplete="username"
-          className="rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-brand-red focus:outline-none focus:ring-1 focus:ring-brand-red"
-        />
+    <form action={action} className="flex flex-col gap-5">
+      <div>
+        <Label htmlFor="email">Email</Label>
+        <Input id="email" name="email" type="email" required autoComplete="username" />
       </div>
 
-      <div className="flex flex-col gap-1">
-        <label htmlFor="password" className="text-sm font-medium text-neutral-700">
-          Password
-        </label>
-        <input
-          id="password"
-          name="password"
-          type="password"
-          required
-          autoComplete="current-password"
-          className="rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-brand-red focus:outline-none focus:ring-1 focus:ring-brand-red"
-        />
+      <div>
+        <Label htmlFor="password">Password</Label>
+        <Input id="password" name="password" type="password" required autoComplete="current-password" />
       </div>
 
-      {state?.error && (
-        <p role="alert" className="text-sm text-red-600">
-          {state.error}
-        </p>
-      )}
+      {state?.error && <Alert variant="error" title="Gagal masuk" message={state.error} />}
 
-      <button
-        type="submit"
-        disabled={pending}
-        className="rounded-md bg-brand-red px-4 py-2 text-sm font-semibold text-white hover:bg-brand-red/90 disabled:opacity-60"
-      >
+      <Button type="submit" disabled={pending} className="w-full">
         {pending ? "Memproses..." : "Masuk"}
-      </button>
+      </Button>
     </form>
   );
 }

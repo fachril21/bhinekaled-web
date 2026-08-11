@@ -6,6 +6,7 @@
 // hanya menambah kerumitan tipe tanpa manfaat nyata.
 
 import type { OrderStatus } from "@/types/database.types";
+import { Badge, type BadgeColor } from "@/components/admin/ui/Badge";
 
 type AdminOrderStatusBadgeProps = {
   status: OrderStatus;
@@ -21,18 +22,18 @@ export const ORDER_STATUS_LABEL: Record<OrderStatus, string> = {
   dibatalkan: "Dibatalkan",
 };
 
-const STATUS_CLASSNAME: Record<OrderStatus, string> = {
-  menunggu_konfirmasi: "bg-amber-100 text-amber-700",
-  diproses: "bg-blue-100 text-blue-700",
-  dikirim: "bg-indigo-100 text-indigo-700",
-  selesai: "bg-green-100 text-green-700",
-  dibatalkan: "bg-red-100 text-red-700",
+const STATUS_COLOR: Record<OrderStatus, BadgeColor> = {
+  menunggu_konfirmasi: "warning",
+  diproses: "info",
+  dikirim: "primary",
+  selesai: "success",
+  dibatalkan: "error",
 };
 
 export function AdminOrderStatusBadge({ status }: AdminOrderStatusBadgeProps) {
   return (
-    <span className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${STATUS_CLASSNAME[status]}`}>
+    <Badge size="sm" color={STATUS_COLOR[status]}>
       {ORDER_STATUS_LABEL[status]}
-    </span>
+    </Badge>
   );
 }

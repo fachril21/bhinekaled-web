@@ -8,13 +8,13 @@ export default async function Page() {
   const categories = await getAdminCategoryList();
 
   return (
-    <main className="mx-auto max-w-5xl px-4 py-10">
-      <h1 className="text-2xl font-bold text-neutral-900">Kelola Kategori</h1>
-      <p className="mt-1 text-sm text-neutral-600">Tambah, ubah, dan hapus kategori produk (termasuk sub-kategori).</p>
+    <div>
+      <h1 className="text-title-sm font-bold text-gray-800">Kelola Kategori</h1>
+      <p className="mt-1 text-sm text-gray-500">Tambah, ubah, dan hapus kategori produk (termasuk sub-kategori).</p>
 
       <div className="mt-6">
         <CategoryManager categories={categories} />
       </div>
-    </main>
+    </div>
   );
 }

@@ -12,7 +12,12 @@ import { isUnoptimizedImage } from "@/lib/image";
 import { deleteProductAction } from "@/lib/actions/products";
 import { AdminStatusBadge } from "@/components/admin/AdminStatusBadge";
 import { AdminConfirmDialog } from "@/components/admin/AdminConfirmDialog";
+import { Table, TableBody, TableCell, TableHeader, TableRow } from "@/components/admin/ui/Table";
+import { Alert } from "@/components/admin/ui/Alert";
 import type { AdminProductListItem } from "@/lib/queries/admin-products";
+
+const HEADER_CELL_CLASS = "px-5 py-3 text-start text-theme-xs font-medium uppercase text-gray-500";
+const BODY_CELL_CLASS = "px-5 py-4 text-start text-theme-sm text-gray-500";
 
 type AdminProductTableProps = {
   products: AdminProductListItem[];
@@ -40,71 +45,99 @@ export function AdminProductTable({ products }: AdminProductTableProps) {
   }
 
   if (products.length === 0) {
-    return <p className="rounded-lg border border-dashed border-neutral-300 p-8 text-center text-sm text-neutral-500">Belum ada produk.</p>;
+    return (
+      <p className="rounded-2xl border border-dashed border-gray-300 p-8 text-center text-sm text-gray-500">
+        Belum ada produk.
+      </p>
+    );
   }
 
   return (
     <>
-      {error && <p className="mb-3 text-sm text-red-600">{error}</p>}
-      <div className="overflow-x-auto rounded-xl border border-neutral-200">
-        <table className="w-full min-w-[720px] text-left text-sm">
-          <thead className="bg-neutral-50 text-xs font-medium uppercase text-neutral-500">
-            <tr>
-              <th className="px-4 py-3">Produk</th>
-              <th className="px-4 py-3">Kategori</th>
-              <th className="px-4 py-3">Harga</th>
-              <th className="px-4 py-3">Stok</th>
-              <th className="px-4 py-3">Varian</th>
-              <th className="px-4 py-3">Status</th>
-              <th className="px-4 py-3 text-right">Aksi</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-neutral-100">
-            {products.map((product) => (
-              <tr key={product.id}>
-                <td className="flex items-center gap-3 px-4 py-3">
-                  <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-md bg-neutral-100">
-                    {product.imageUrl && (
-                      <Image
-                        src={product.imageUrl}
-                        alt={product.name}
-                        fill
-                        sizes="40px"
-                        className="object-cover"
-                        unoptimized={isUnoptimizedImage(product.imageUrl)}
-                      />
-                    )}
-                  </div>
-                  <span className="font-medium text-neutral-900">{product.name}</span>
-                </td>
-                <td className="px-4 py-3 text-neutral-600">{product.categoryName ?? "Tanpa kategori"}</td>
-                <td className="px-4 py-3 text-neutral-600">{formatRupiah(product.basePrice)}</td>
-                <td className="px-4 py-3 text-neutral-600">{product.stock}</td>
-                <td className="px-4 py-3 text-neutral-600">{product.variantCount > 0 ? product.variantCount : "-"}</td>
-                <td className="px-4 py-3">
-                  <AdminStatusBadge status={product.status} />
-                </td>
-                <td className="px-4 py-3 text-right">
-                  <div className="flex justify-end gap-3">
-                    <Link href={`/admin/produk/${product.id}/edit`} className="font-medium text-brand-red hover:underline">
-                      Edit
-                    </Link>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setError(null);
-                        setPendingDeleteId(product.id);
-                      }}
-                      className="font-medium text-neutral-500 hover:text-red-600"
-                    >
-                      Hapus
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      {error && (
+        <div className="mb-4">
+          <Alert variant="error" title="Gagal menghapus produk" message={error} />
+        </div>
+      )}
+      <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white">
+        <div className="max-w-full overflow-x-auto">
+          <Table className="min-w-[820px]">
+            <TableHeader className="border-b border-gray-100">
+              <TableRow>
+                <TableCell isHeader className={HEADER_CELL_CLASS}>
+                  Produk
+                </TableCell>
+                <TableCell isHeader className={HEADER_CELL_CLASS}>
+                  Kategori
+                </TableCell>
+                <TableCell isHeader className={HEADER_CELL_CLASS}>
+                  Harga
+                </TableCell>
+                <TableCell isHeader className={HEADER_CELL_CLASS}>
+                  Stok
+                </TableCell>
+                <TableCell isHeader className={HEADER_CELL_CLASS}>
+                  Varian
+                </TableCell>
+                <TableCell isHeader className={HEADER_CELL_CLASS}>
+                  Status
+                </TableCell>
+                <TableCell isHeader className={`${HEADER_CELL_CLASS} text-right`}>
+                  Aksi
+                </TableCell>
+              </TableRow>
+            </TableHeader>
+            <TableBody className="divide-y divide-gray-100">
+              {products.map((product) => (
+                <TableRow key={product.id}>
+                  <TableCell className={BODY_CELL_CLASS}>
+                    <div className="flex items-center gap-3">
+                      <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-lg bg-gray-100">
+                        {product.imageUrl && (
+                          <Image
+                            src={product.imageUrl}
+                            alt={product.name}
+                            fill
+                            sizes="40px"
+                            className="object-cover"
+                            unoptimized={isUnoptimizedImage(product.imageUrl)}
+                          />
+                        )}
+                      </div>
+                      <span className="font-medium text-gray-800">{product.name}</span>
+                    </div>
+                  </TableCell>
+                  <TableCell className={BODY_CELL_CLASS}>{product.categoryName ?? "Tanpa kategori"}</TableCell>
+                  <TableCell className={BODY_CELL_CLASS}>{formatRupiah(product.basePrice)}</TableCell>
+                  <TableCell className={BODY_CELL_CLASS}>{product.stock}</TableCell>
+                  <TableCell className={BODY_CELL_CLASS}>
+                    {product.variantCount > 0 ? product.variantCount : "-"}
+                  </TableCell>
+                  <TableCell className={BODY_CELL_CLASS}>
+                    <AdminStatusBadge status={product.status} />
+                  </TableCell>
+                  <TableCell className={`${BODY_CELL_CLASS} text-right`}>
+                    <div className="flex justify-end gap-4">
+                      <Link href={`/admin/produk/${product.id}/edit`} className="font-medium text-brand-600 hover:underline">
+                        Edit
+                      </Link>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setError(null);
+                          setPendingDeleteId(product.id);
+                        }}
+                        className="font-medium text-gray-500 hover:text-error-600"
+                      >
+                        Hapus
+                      </button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
       </div>
 
       <AdminConfirmDialog

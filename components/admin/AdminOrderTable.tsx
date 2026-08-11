@@ -7,7 +7,11 @@
 import Link from "next/link";
 import { formatRupiah, formatDate } from "@/lib/format";
 import { AdminOrderStatusBadge } from "@/components/admin/AdminOrderStatusBadge";
+import { Table, TableBody, TableCell, TableHeader, TableRow } from "@/components/admin/ui/Table";
 import type { AdminOrderListItem } from "@/lib/queries/orders";
+
+const HEADER_CELL_CLASS = "px-5 py-3 text-start text-theme-xs font-medium uppercase text-gray-500";
+const BODY_CELL_CLASS = "px-5 py-4 text-start text-theme-sm text-gray-500";
 
 type AdminOrderTableProps = {
   orders: AdminOrderListItem[];
@@ -16,42 +20,54 @@ type AdminOrderTableProps = {
 export function AdminOrderTable({ orders }: AdminOrderTableProps) {
   if (orders.length === 0) {
     return (
-      <p className="rounded-lg border border-dashed border-neutral-300 p-8 text-center text-sm text-neutral-500">
+      <p className="rounded-2xl border border-dashed border-gray-300 p-8 text-center text-sm text-gray-500">
         Belum ada order.
       </p>
     );
   }
 
   return (
-    <div className="overflow-x-auto rounded-xl border border-neutral-200">
-      <table className="w-full min-w-[640px] text-left text-sm">
-        <thead className="bg-neutral-50 text-xs font-medium uppercase text-neutral-500">
-          <tr>
-            <th className="px-4 py-3">No. Order</th>
-            <th className="px-4 py-3">Tanggal</th>
-            <th className="px-4 py-3">Customer</th>
-            <th className="px-4 py-3">Total</th>
-            <th className="px-4 py-3">Status</th>
-          </tr>
-        </thead>
-        <tbody className="divide-y divide-neutral-100">
-          {orders.map((order) => (
-            <tr key={order.id}>
-              <td className="px-4 py-3">
-                <Link href={`/admin/order/${order.id}`} className="font-medium text-brand-red hover:underline">
-                  {order.orderNumber}
-                </Link>
-              </td>
-              <td className="px-4 py-3 text-neutral-600">{formatDate(order.createdAt)}</td>
-              <td className="px-4 py-3 text-neutral-600">{order.customerName}</td>
-              <td className="px-4 py-3 text-neutral-600">{formatRupiah(order.total)}</td>
-              <td className="px-4 py-3">
-                <AdminOrderStatusBadge status={order.status} />
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+    <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white">
+      <div className="max-w-full overflow-x-auto">
+        <Table className="min-w-[720px]">
+          <TableHeader className="border-b border-gray-100">
+            <TableRow>
+              <TableCell isHeader className={HEADER_CELL_CLASS}>
+                No. Order
+              </TableCell>
+              <TableCell isHeader className={HEADER_CELL_CLASS}>
+                Tanggal
+              </TableCell>
+              <TableCell isHeader className={HEADER_CELL_CLASS}>
+                Customer
+              </TableCell>
+              <TableCell isHeader className={HEADER_CELL_CLASS}>
+                Total
+              </TableCell>
+              <TableCell isHeader className={HEADER_CELL_CLASS}>
+                Status
+              </TableCell>
+            </TableRow>
+          </TableHeader>
+          <TableBody className="divide-y divide-gray-100">
+            {orders.map((order) => (
+              <TableRow key={order.id}>
+                <TableCell className={BODY_CELL_CLASS}>
+                  <Link href={`/admin/order/${order.id}`} className="font-medium text-brand-600 hover:underline">
+                    {order.orderNumber}
+                  </Link>
+                </TableCell>
+                <TableCell className={BODY_CELL_CLASS}>{formatDate(order.createdAt)}</TableCell>
+                <TableCell className={BODY_CELL_CLASS}>{order.customerName}</TableCell>
+                <TableCell className={BODY_CELL_CLASS}>{formatRupiah(order.total)}</TableCell>
+                <TableCell className={BODY_CELL_CLASS}>
+                  <AdminOrderStatusBadge status={order.status} />
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
     </div>
   );
 }

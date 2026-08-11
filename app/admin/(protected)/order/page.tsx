@@ -5,6 +5,10 @@ import { getAdminOrderList } from "@/lib/queries/orders";
 import { AdminOrderTable } from "@/components/admin/AdminOrderTable";
 import { AdminOrderPagination } from "@/components/admin/AdminOrderPagination";
 import { ORDER_STATUS_LABEL } from "@/components/admin/AdminOrderStatusBadge";
+import { Label } from "@/components/admin/ui/form/Label";
+import { Input } from "@/components/admin/ui/form/Input";
+import { Select } from "@/components/admin/ui/form/Select";
+import { Button } from "@/components/admin/ui/Button";
 import type { OrderStatus } from "@/types/database.types";
 
 const STATUS_FILTER_OPTIONS: { value: OrderStatus | "semua"; label: string }[] = [
@@ -35,46 +39,29 @@ export default async function Page({ searchParams }: OrderPageProps) {
   const result = await getAdminOrderList({ status, search, page });
 
   return (
-    <main className="mx-auto max-w-5xl px-4 py-10">
+    <div>
       <div>
-        <h1 className="text-2xl font-bold text-neutral-900">Kelola Order</h1>
-        <p className="mt-1 text-sm text-neutral-600">Pantau order masuk dan perbarui status pengiriman.</p>
+        <h1 className="text-title-sm font-bold text-gray-800">Kelola Order</h1>
+        <p className="mt-1 text-sm text-gray-500">Pantau order masuk dan perbarui status pengiriman.</p>
       </div>
 
-      <form method="get" className="mt-6 flex flex-wrap items-center gap-2">
-        <label htmlFor="status-filter" className="text-sm text-neutral-600">
-          Filter status:
-        </label>
-        <select
-          id="status-filter"
-          name="status"
-          defaultValue={status}
-          className="rounded-md border border-neutral-300 px-3 py-1.5 text-sm focus:border-brand-red focus:outline-none focus:ring-1 focus:ring-brand-red"
-        >
-          {STATUS_FILTER_OPTIONS.map((opt) => (
-            <option key={opt.value} value={opt.value}>
-              {opt.label}
-            </option>
-          ))}
-        </select>
+      <form method="get" className="mt-6 flex flex-wrap items-end gap-3 rounded-2xl border border-gray-200 bg-white p-4">
+        <div className="w-56">
+          <Label htmlFor="status-filter">Filter status</Label>
+          <Select id="status-filter" name="status" defaultValue={status} options={STATUS_FILTER_OPTIONS} />
+        </div>
 
-        <input
-          type="text"
-          name="q"
-          defaultValue={q ?? ""}
-          placeholder="Cari nomor order..."
-          className="rounded-md border border-neutral-300 px-3 py-1.5 text-sm focus:border-brand-red focus:outline-none focus:ring-1 focus:ring-brand-red"
-        />
+        <div className="w-64">
+          <Label htmlFor="order-search">Cari nomor order</Label>
+          <Input id="order-search" type="text" name="q" defaultValue={q ?? ""} placeholder="Cari nomor order..." />
+        </div>
 
-        <button
-          type="submit"
-          className="rounded-md border border-neutral-300 px-3 py-1.5 text-sm font-medium text-neutral-700 hover:bg-neutral-50"
-        >
+        <Button type="submit" variant="outline">
           Terapkan
-        </button>
+        </Button>
       </form>
 
-      <div className="mt-4">
+      <div className="mt-6">
         <AdminOrderTable orders={result.orders} />
       </div>
 
@@ -84,6 +71,6 @@ export default async function Page({ searchParams }: OrderPageProps) {
         basePath="/admin/order"
         query={{ status: status === "semua" ? undefined : status, q: search }}
       />
-    </main>
+    </div>
   );
 }

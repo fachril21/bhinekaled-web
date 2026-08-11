@@ -7,6 +7,8 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { AdminConfirmDialog } from "@/components/admin/AdminConfirmDialog";
+import { Button } from "@/components/admin/ui/Button";
+import { Alert } from "@/components/admin/ui/Alert";
 import type { clearShippingRateCacheAction } from "@/lib/actions/shipping-cache";
 
 type ClearShippingCacheButtonProps = {
@@ -36,21 +38,21 @@ export function ClearShippingCacheButton({ action }: ClearShippingCacheButtonPro
   }
 
   return (
-    <div className="flex flex-col gap-2">
-      <button
+    <div className="flex flex-col gap-3">
+      <Button
         type="button"
         onClick={() => {
           setError(null);
           setSuccess(false);
           setOpen(true);
         }}
-        className="self-start rounded-md bg-brand-red px-4 py-2 text-sm font-semibold text-white hover:bg-brand-red/90"
+        className="self-start"
       >
         Bersihkan Cache Ongkir
-      </button>
+      </Button>
 
-      {error && <p className="text-sm text-red-600">{error}</p>}
-      {success && <p className="text-sm text-green-700">Cache ongkir berhasil dibersihkan.</p>}
+      {error && <Alert variant="error" title="Gagal membersihkan cache" message={error} />}
+      {success && <Alert variant="success" title="Berhasil" message="Cache ongkir berhasil dibersihkan." />}
 
       <AdminConfirmDialog
         open={open}

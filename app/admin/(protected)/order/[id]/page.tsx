@@ -14,6 +14,10 @@ import { OrderStatusStepper } from "@/components/admin/OrderStatusStepper";
 import { OrderStatusUpdateForm } from "@/components/admin/OrderStatusUpdateForm";
 import { PaymentStatusBadge } from "@/components/admin/PaymentStatusBadge";
 import { RecheckPaymentButton } from "@/components/admin/RecheckPaymentButton";
+import { Table, TableBody, TableCell, TableHeader, TableRow } from "@/components/admin/ui/Table";
+
+const HEADER_CELL_CLASS = "px-5 py-3 text-start text-theme-xs font-medium uppercase text-gray-500";
+const BODY_CELL_CLASS = "px-5 py-4 text-start text-theme-sm text-gray-500";
 
 type OrderDetailPageProps = {
   params: Promise<{ id: string }>;
@@ -25,15 +29,15 @@ export default async function Page({ params }: OrderDetailPageProps) {
   if (!order) notFound();
 
   return (
-    <main className="mx-auto max-w-4xl px-4 py-10">
-      <Link href="/admin/order" className="text-sm text-brand-red hover:underline">
+    <div>
+      <Link href="/admin/order" className="text-sm text-brand-600 hover:underline">
         ← Kembali ke daftar order
       </Link>
 
       <div className="mt-4 flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-neutral-900">{order.orderNumber}</h1>
-          <p className="text-sm text-neutral-500">Dibuat {formatDate(order.createdAt)}</p>
+          <h1 className="text-title-sm font-bold text-gray-800">{order.orderNumber}</h1>
+          <p className="text-sm text-gray-500">Dibuat {formatDate(order.createdAt)}</p>
         </div>
         <AdminOrderStatusBadge status={order.status} />
       </div>
@@ -42,77 +46,77 @@ export default async function Page({ params }: OrderDetailPageProps) {
         <OrderStatusStepper status={order.status} createdAt={order.createdAt} updatedAt={order.updatedAt} />
       </section>
 
-      <section className="mt-8 grid gap-6 md:grid-cols-2">
-        <div className="rounded-xl border border-neutral-200 p-4">
-          <h2 className="text-sm font-semibold text-neutral-900">Data Pengiriman</h2>
+      <section className="mt-6 grid gap-6 md:grid-cols-2">
+        <div className="rounded-2xl border border-gray-200 bg-white p-5">
+          <h2 className="text-base font-semibold text-gray-800">Data Pengiriman</h2>
           <dl className="mt-3 space-y-2 text-sm">
             <div>
-              <dt className="text-neutral-500">Nama</dt>
-              <dd className="text-neutral-900">{order.customerName}</dd>
+              <dt className="text-gray-500">Nama</dt>
+              <dd className="text-gray-800">{order.customerName}</dd>
             </div>
             <div>
-              <dt className="text-neutral-500">No. HP</dt>
-              <dd className="text-neutral-900">{order.customerPhone}</dd>
+              <dt className="text-gray-500">No. HP</dt>
+              <dd className="text-gray-800">{order.customerPhone}</dd>
             </div>
             <div>
-              <dt className="text-neutral-500">Alamat</dt>
-              <dd className="text-neutral-900">{order.shippingAddress}</dd>
+              <dt className="text-gray-500">Alamat</dt>
+              <dd className="text-gray-800">{order.shippingAddress}</dd>
             </div>
             {order.notes && (
               <div>
-                <dt className="text-neutral-500">Catatan</dt>
-                <dd className="text-neutral-900">{order.notes}</dd>
+                <dt className="text-gray-500">Catatan</dt>
+                <dd className="text-gray-800">{order.notes}</dd>
               </div>
             )}
           </dl>
         </div>
 
-        <div className="rounded-xl border border-neutral-200 p-4">
-          <h2 className="text-sm font-semibold text-neutral-900">Ringkasan Pembayaran</h2>
+        <div className="rounded-2xl border border-gray-200 bg-white p-5">
+          <h2 className="text-base font-semibold text-gray-800">Ringkasan Pembayaran</h2>
           <dl className="mt-3 space-y-2 text-sm">
             <div className="flex justify-between">
-              <dt className="text-neutral-500">Subtotal</dt>
-              <dd className="text-neutral-900">{formatRupiah(order.subtotal)}</dd>
+              <dt className="text-gray-500">Subtotal</dt>
+              <dd className="text-gray-800">{formatRupiah(order.subtotal)}</dd>
             </div>
             <div className="flex justify-between">
-              <dt className="text-neutral-500">Ongkir</dt>
-              <dd className="text-neutral-900">{formatRupiah(order.shippingCost)}</dd>
+              <dt className="text-gray-500">Ongkir</dt>
+              <dd className="text-gray-800">{formatRupiah(order.shippingCost)}</dd>
             </div>
             <div className="flex justify-between">
-              <dt className="text-neutral-500">Kurir</dt>
-              <dd className="text-neutral-900">{order.shippingCourierService ?? "—"}</dd>
+              <dt className="text-gray-500">Kurir</dt>
+              <dd className="text-gray-800">{order.shippingCourierService ?? "—"}</dd>
             </div>
             <div className="flex justify-between">
-              <dt className="text-neutral-500">Tujuan Ongkir</dt>
-              <dd className="text-neutral-900">{order.shippingDestinationLabel ?? "—"}</dd>
+              <dt className="text-gray-500">Tujuan Ongkir</dt>
+              <dd className="text-gray-800">{order.shippingDestinationLabel ?? "—"}</dd>
             </div>
-            <div className="flex justify-between border-t border-neutral-200 pt-2 font-semibold">
-              <dt className="text-neutral-900">Total</dt>
-              <dd className="text-neutral-900">{formatRupiah(order.total)}</dd>
-            </div>
-            <div className="flex justify-between">
-              <dt className="text-neutral-500">Metode Pembayaran</dt>
-              <dd className="text-neutral-900">{order.midtransPaymentType ?? order.paymentMethod ?? "—"}</dd>
+            <div className="flex justify-between border-t border-gray-200 pt-2 font-semibold">
+              <dt className="text-gray-800">Total</dt>
+              <dd className="text-gray-800">{formatRupiah(order.total)}</dd>
             </div>
             <div className="flex justify-between">
-              <dt className="text-neutral-500">Status Pembayaran</dt>
+              <dt className="text-gray-500">Metode Pembayaran</dt>
+              <dd className="text-gray-800">{order.midtransPaymentType ?? order.paymentMethod ?? "—"}</dd>
+            </div>
+            <div className="flex justify-between">
+              <dt className="text-gray-500">Status Pembayaran</dt>
               <dd>
                 <PaymentStatusBadge status={order.paymentStatus} />
               </dd>
             </div>
             <div className="flex justify-between">
-              <dt className="text-neutral-500">No. Transaksi Midtrans</dt>
-              <dd className="text-neutral-900">{order.midtransTransactionId ?? "—"}</dd>
+              <dt className="text-gray-500">No. Transaksi Midtrans</dt>
+              <dd className="text-gray-800">{order.midtransTransactionId ?? "—"}</dd>
             </div>
             <div className="flex justify-between">
-              <dt className="text-neutral-500">Terakhir Notifikasi</dt>
-              <dd className="text-neutral-900">
+              <dt className="text-gray-500">Terakhir Notifikasi</dt>
+              <dd className="text-gray-800">
                 {order.midtransLastNotificationAt ? formatDate(order.midtransLastNotificationAt) : "—"}
               </dd>
             </div>
             <div className="flex justify-between">
-              <dt className="text-neutral-500">Dibayar pada</dt>
-              <dd className="text-neutral-900">{order.paidAt ? formatDate(order.paidAt) : "—"}</dd>
+              <dt className="text-gray-500">Dibayar pada</dt>
+              <dd className="text-gray-800">{order.paidAt ? formatDate(order.paidAt) : "—"}</dd>
             </div>
           </dl>
           <div className="mt-4">
@@ -121,44 +125,54 @@ export default async function Page({ params }: OrderDetailPageProps) {
         </div>
       </section>
 
-      <section className="mt-8">
-        <h2 className="text-sm font-semibold text-neutral-900">Item Dibeli</h2>
+      <section className="mt-6">
+        <h2 className="text-base font-semibold text-gray-800">Item Dibeli</h2>
         {order.items.length === 0 ? (
-          <p className="mt-3 rounded-lg border border-dashed border-neutral-300 p-6 text-center text-sm text-neutral-500">
+          <p className="mt-3 rounded-2xl border border-dashed border-gray-300 p-6 text-center text-sm text-gray-500">
             Tidak ada item.
           </p>
         ) : (
-          <div className="mt-3 overflow-x-auto rounded-xl border border-neutral-200">
-            <table className="w-full min-w-[560px] text-left text-sm">
-              <thead className="bg-neutral-50 text-xs font-medium uppercase text-neutral-500">
-                <tr>
-                  <th className="px-4 py-3">Produk</th>
-                  <th className="px-4 py-3">Harga</th>
-                  <th className="px-4 py-3">Qty</th>
-                  <th className="px-4 py-3">Subtotal</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-neutral-100">
-                {order.items.map((item) => (
-                  <tr key={item.id}>
-                    <td className="px-4 py-3">
-                      <span className="font-medium text-neutral-900">{item.productName}</span>
-                      {item.variantName && <span className="block text-xs text-neutral-500">{item.variantName}</span>}
-                    </td>
-                    <td className="px-4 py-3 text-neutral-600">{formatRupiah(item.priceSnapshot)}</td>
-                    <td className="px-4 py-3 text-neutral-600">{item.qty}</td>
-                    <td className="px-4 py-3 text-neutral-600">{formatRupiah(item.subtotal)}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <div className="mt-3 overflow-hidden rounded-2xl border border-gray-200 bg-white">
+            <div className="max-w-full overflow-x-auto">
+              <Table className="min-w-[560px]">
+                <TableHeader className="border-b border-gray-100">
+                  <TableRow>
+                    <TableCell isHeader className={HEADER_CELL_CLASS}>
+                      Produk
+                    </TableCell>
+                    <TableCell isHeader className={HEADER_CELL_CLASS}>
+                      Harga
+                    </TableCell>
+                    <TableCell isHeader className={HEADER_CELL_CLASS}>
+                      Qty
+                    </TableCell>
+                    <TableCell isHeader className={HEADER_CELL_CLASS}>
+                      Subtotal
+                    </TableCell>
+                  </TableRow>
+                </TableHeader>
+                <TableBody className="divide-y divide-gray-100">
+                  {order.items.map((item) => (
+                    <TableRow key={item.id}>
+                      <TableCell className={BODY_CELL_CLASS}>
+                        <span className="font-medium text-gray-800">{item.productName}</span>
+                        {item.variantName && <span className="block text-xs text-gray-500">{item.variantName}</span>}
+                      </TableCell>
+                      <TableCell className={BODY_CELL_CLASS}>{formatRupiah(item.priceSnapshot)}</TableCell>
+                      <TableCell className={BODY_CELL_CLASS}>{item.qty}</TableCell>
+                      <TableCell className={BODY_CELL_CLASS}>{formatRupiah(item.subtotal)}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
           </div>
         )}
       </section>
 
-      <section className="mt-8 max-w-sm">
+      <section className="mt-6 max-w-sm">
         <OrderStatusUpdateForm orderId={order.id} currentStatus={order.status} />
       </section>
-    </main>
+    </div>
   );
 }

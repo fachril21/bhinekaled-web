@@ -14,9 +14,18 @@ import { ProductImageManager, type DeletedImage, type ManagedImage } from "@/com
 import { ProductVariantEditor, type ManagedVariant } from "@/components/admin/ProductVariantEditor";
 import { ProductSpecificationEditor, type SpecificationRow } from "@/components/admin/ProductSpecificationEditor";
 import { VehicleCompatibilityEditor } from "@/components/admin/VehicleCompatibilityEditor";
+import { Label } from "@/components/admin/ui/form/Label";
+import { Input } from "@/components/admin/ui/form/Input";
+import { TextArea } from "@/components/admin/ui/form/TextArea";
+import { Select } from "@/components/admin/ui/form/Select";
+import { Button } from "@/components/admin/ui/Button";
+import { Alert } from "@/components/admin/ui/Alert";
 import type { Category } from "@/lib/queries/categories";
 import type { AdminProductDetail } from "@/lib/queries/admin-products";
 import type { ProductStatus } from "@/types/database.types";
+
+const CARD_CLASS = "flex flex-col gap-4 rounded-2xl border border-gray-200 bg-white p-5 md:p-6";
+const CARD_TITLE_CLASS = "text-base font-semibold text-gray-800";
 
 type ProductFormProps = {
   mode: "create" | "edit";
@@ -140,132 +149,109 @@ export function ProductForm({ mode, categories, initialProduct }: ProductFormPro
     });
   }
 
+  const statusSelectOptions = STATUS_OPTIONS.map((opt) => ({ value: opt.value, label: opt.label }));
+  const categorySelectOptions = categories.map((c) => ({ value: c.id, label: c.name }));
+
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-6">
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <div className="flex flex-col gap-1">
-          <label htmlFor="product-name" className="text-sm font-medium text-neutral-700">
-            Nama Produk
-          </label>
-          <input
-            id="product-name"
-            value={name}
-            onChange={(e) => handleNameChange(e.target.value)}
-            required
-            className="rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-brand-red focus:outline-none focus:ring-1 focus:ring-brand-red"
-          />
-          {fieldErrors.name && <p className="text-xs text-red-600">{fieldErrors.name}</p>}
+      <div className={CARD_CLASS}>
+        <h2 className={CARD_TITLE_CLASS}>Informasi Dasar</h2>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <div>
+            <Label htmlFor="product-name">Nama Produk</Label>
+            <Input
+              id="product-name"
+              value={name}
+              onChange={(e) => handleNameChange(e.target.value)}
+              required
+              error={Boolean(fieldErrors.name)}
+              hint={fieldErrors.name}
+            />
+          </div>
+
+          <div>
+            <Label htmlFor="product-slug">Slug</Label>
+            <Input
+              id="product-slug"
+              value={slug}
+              onChange={(e) => {
+                setSlugTouched(true);
+                setSlug(e.target.value);
+              }}
+              required
+              error={Boolean(fieldErrors.slug)}
+              hint={fieldErrors.slug}
+            />
+          </div>
         </div>
 
-        <div className="flex flex-col gap-1">
-          <label htmlFor="product-slug" className="text-sm font-medium text-neutral-700">
-            Slug
-          </label>
-          <input
-            id="product-slug"
-            value={slug}
-            onChange={(e) => {
-              setSlugTouched(true);
-              setSlug(e.target.value);
-            }}
-            required
-            className="rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-brand-red focus:outline-none focus:ring-1 focus:ring-brand-red"
+        <div>
+          <Label htmlFor="product-description">Deskripsi</Label>
+          <TextArea
+            id="product-description"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            rows={4}
           />
-          {fieldErrors.slug && <p className="text-xs text-red-600">{fieldErrors.slug}</p>}
         </div>
       </div>
 
-      <div className="flex flex-col gap-1">
-        <label htmlFor="product-description" className="text-sm font-medium text-neutral-700">
-          Deskripsi
-        </label>
-        <textarea
-          id="product-description"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          rows={4}
-          className="rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-brand-red focus:outline-none focus:ring-1 focus:ring-brand-red"
-        />
-      </div>
+      <div className={CARD_CLASS}>
+        <h2 className={CARD_TITLE_CLASS}>Kategori, Harga &amp; Stok</h2>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-5">
+          <div>
+            <Label htmlFor="product-category">Kategori</Label>
+            <Select
+              id="product-category"
+              value={categoryId}
+              onChange={(e) => setCategoryId(e.target.value)}
+              placeholder="Tanpa kategori"
+              options={categorySelectOptions}
+            />
+          </div>
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-5">
-        <div className="flex flex-col gap-1">
-          <label htmlFor="product-category" className="text-sm font-medium text-neutral-700">
-            Kategori
-          </label>
-          <select
-            id="product-category"
-            value={categoryId}
-            onChange={(e) => setCategoryId(e.target.value)}
-            className="rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-brand-red focus:outline-none focus:ring-1 focus:ring-brand-red"
-          >
-            <option value="">Tanpa kategori</option>
-            {categories.map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.name}
-              </option>
-            ))}
-          </select>
-        </div>
+          <div>
+            <Label htmlFor="product-status">Status</Label>
+            <Select
+              id="product-status"
+              value={status}
+              onChange={(e) => setStatus(e.target.value as ProductStatus)}
+              options={statusSelectOptions}
+            />
+          </div>
 
-        <div className="flex flex-col gap-1">
-          <label htmlFor="product-status" className="text-sm font-medium text-neutral-700">
-            Status
-          </label>
-          <select
-            id="product-status"
-            value={status}
-            onChange={(e) => setStatus(e.target.value as ProductStatus)}
-            className="rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-brand-red focus:outline-none focus:ring-1 focus:ring-brand-red"
-          >
-            {STATUS_OPTIONS.map((opt) => (
-              <option key={opt.value} value={opt.value}>
-                {opt.label}
-              </option>
-            ))}
-          </select>
-        </div>
+          <div>
+            <Label htmlFor="product-price">Harga Dasar</Label>
+            <Input
+              id="product-price"
+              value={basePrice}
+              onChange={(e) => setBasePrice(e.target.value)}
+              inputMode="numeric"
+              required
+            />
+          </div>
 
-        <div className="flex flex-col gap-1">
-          <label htmlFor="product-price" className="text-sm font-medium text-neutral-700">
-            Harga Dasar
-          </label>
-          <input
-            id="product-price"
-            value={basePrice}
-            onChange={(e) => setBasePrice(e.target.value)}
-            inputMode="numeric"
-            required
-            className="rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-brand-red focus:outline-none focus:ring-1 focus:ring-brand-red"
-          />
-        </div>
+          <div>
+            <Label htmlFor="product-stock">Stok Dasar</Label>
+            <Input
+              id="product-stock"
+              value={stock}
+              onChange={(e) => setStock(e.target.value)}
+              inputMode="numeric"
+              required
+            />
+          </div>
 
-        <div className="flex flex-col gap-1">
-          <label htmlFor="product-stock" className="text-sm font-medium text-neutral-700">
-            Stok Dasar
-          </label>
-          <input
-            id="product-stock"
-            value={stock}
-            onChange={(e) => setStock(e.target.value)}
-            inputMode="numeric"
-            required
-            className="rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-brand-red focus:outline-none focus:ring-1 focus:ring-brand-red"
-          />
-        </div>
-
-        <div className="flex flex-col gap-1">
-          <label htmlFor="product-weight" className="text-sm font-medium text-neutral-700">
-            Berat (gram)
-          </label>
-          <input
-            id="product-weight"
-            value={weightGram}
-            onChange={(e) => setWeightGram(e.target.value)}
-            inputMode="numeric"
-            required
-            className="rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-brand-red focus:outline-none focus:ring-1 focus:ring-brand-red"
-          />
+          <div>
+            <Label htmlFor="product-weight">Berat (gram)</Label>
+            <Input
+              id="product-weight"
+              value={weightGram}
+              onChange={(e) => setWeightGram(e.target.value)}
+              inputMode="numeric"
+              required
+            />
+          </div>
         </div>
       </div>
 
@@ -287,41 +273,30 @@ export function ProductForm({ mode, categories, initialProduct }: ProductFormPro
 
       <VehicleCompatibilityEditor values={vehicleCompatibility} onChange={setVehicleCompatibility} />
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <div className="flex flex-col gap-1">
-          <label htmlFor="product-meta-title" className="text-sm font-medium text-neutral-700">
-            Meta Title (SEO, opsional)
-          </label>
-          <input
-            id="product-meta-title"
-            value={metaTitle}
-            onChange={(e) => setMetaTitle(e.target.value)}
-            className="rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-brand-red focus:outline-none focus:ring-1 focus:ring-brand-red"
-          />
-        </div>
-        <div className="flex flex-col gap-1">
-          <label htmlFor="product-meta-description" className="text-sm font-medium text-neutral-700">
-            Meta Description (SEO, opsional)
-          </label>
-          <input
-            id="product-meta-description"
-            value={metaDescription}
-            onChange={(e) => setMetaDescription(e.target.value)}
-            className="rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-brand-red focus:outline-none focus:ring-1 focus:ring-brand-red"
-          />
+      <div className={CARD_CLASS}>
+        <h2 className={CARD_TITLE_CLASS}>SEO (opsional)</h2>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <div>
+            <Label htmlFor="product-meta-title">Meta Title</Label>
+            <Input id="product-meta-title" value={metaTitle} onChange={(e) => setMetaTitle(e.target.value)} />
+          </div>
+          <div>
+            <Label htmlFor="product-meta-description">Meta Description</Label>
+            <Input
+              id="product-meta-description"
+              value={metaDescription}
+              onChange={(e) => setMetaDescription(e.target.value)}
+            />
+          </div>
         </div>
       </div>
 
-      {error && <p className="text-sm text-red-600">{error}</p>}
+      {error && <Alert variant="error" title="Gagal menyimpan produk" message={error} />}
 
       <div>
-        <button
-          type="submit"
-          disabled={isPending}
-          className="rounded-md bg-brand-red px-6 py-2 text-sm font-semibold text-white hover:bg-brand-red/90 disabled:opacity-60"
-        >
+        <Button type="submit" disabled={isPending}>
           {isPending ? "Menyimpan..." : mode === "edit" ? "Simpan Perubahan" : "Simpan Produk"}
-        </button>
+        </Button>
       </div>
     </form>
   );

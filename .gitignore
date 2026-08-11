@@ -42,3 +42,8 @@ next-env.d.ts
 
 # planning docs (internal — jangan di-commit/expose)
 /docs/
+
+# local Claude Code tooling config
+/.claude/
+/.agents/
+/skills-lock.json

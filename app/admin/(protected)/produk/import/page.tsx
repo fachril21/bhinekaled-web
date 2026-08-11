@@ -1,11 +1,11 @@
 export default function Page() {
   return (
-    <main className="mx-auto max-w-5xl px-4 py-16">
-      <h1 className="text-2xl font-bold">Import Produk dari Shopee</h1>
-      <p className="mt-2 text-neutral-600">
+    <div className="rounded-2xl border border-dashed border-gray-300 bg-white p-8">
+      <h1 className="text-title-sm font-bold text-gray-800">Import Produk dari Shopee</h1>
+      <p className="mt-2 text-sm text-gray-500">
         Placeholder halaman — Epic 6: Import Produk dari Shopee. Lihat <code>docs/EPICS.md</code> untuk
         acceptance criteria.
       </p>
-    </main>
+    </div>
   );
 }

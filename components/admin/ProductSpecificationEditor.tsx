@@ -6,6 +6,9 @@
 // specifications (jsonb) generik key-value, bukan skema tetap — tidak ada
 // validasi bentuk ketat di sini (watt/lumen/dsb bebas teks).
 
+import { Input } from "@/components/admin/ui/form/Input";
+import { Button } from "@/components/admin/ui/Button";
+
 export type SpecificationRow = { key: string; value: string };
 
 type ProductSpecificationEditorProps = {
@@ -27,40 +30,32 @@ export function ProductSpecificationEditor({ rows, onChange }: ProductSpecificat
   }
 
   return (
-    <div className="flex flex-col gap-2">
-      <label className="text-sm font-medium text-neutral-700">Spesifikasi</label>
+    <div className="flex flex-col gap-3 rounded-2xl border border-gray-200 bg-white p-5 md:p-6">
+      <h2 className="text-base font-semibold text-gray-800">Spesifikasi</h2>
       {rows.map((row, index) => (
         <div key={index} className="flex gap-2">
-          <input
+          <Input
             value={row.key}
             onChange={(e) => updateRow(index, "key", e.target.value)}
             placeholder="Nama (mis. watt)"
             aria-label="Nama spesifikasi"
-            className="w-1/3 rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-brand-red focus:outline-none focus:ring-1 focus:ring-brand-red"
+            className="w-1/3"
           />
-          <input
+          <Input
             value={row.value}
             onChange={(e) => updateRow(index, "value", e.target.value)}
             placeholder="Nilai (mis. 35)"
             aria-label="Nilai spesifikasi"
-            className="flex-1 rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-brand-red focus:outline-none focus:ring-1 focus:ring-brand-red"
+            className="flex-1"
           />
-          <button
-            type="button"
-            onClick={() => removeRow(index)}
-            className="rounded-md border border-neutral-300 px-3 text-sm text-neutral-500 hover:text-red-600"
-          >
+          <Button type="button" variant="danger" size="sm" onClick={() => removeRow(index)}>
             Hapus
-          </button>
+          </Button>
         </div>
       ))}
-      <button
-        type="button"
-        onClick={addRow}
-        className="self-start text-sm font-medium text-brand-red hover:underline"
-      >
+      <Button type="button" variant="outline" size="sm" onClick={addRow} className="self-start">
         + Tambah Spesifikasi
-      </button>
+      </Button>
     </div>
   );
 }

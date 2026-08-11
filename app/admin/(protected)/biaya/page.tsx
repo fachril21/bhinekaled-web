@@ -8,14 +8,14 @@ export default async function Page() {
   const fees = await getAdminFeeList();
 
   return (
-    <main className="mx-auto max-w-3xl px-4 py-10">
-      <h1 className="text-2xl font-bold text-neutral-900">Pengaturan Biaya Lainnya</h1>
-      <p className="mt-1 text-sm text-neutral-600">
+    <div>
+      <h1 className="text-title-sm font-bold text-gray-800">Pengaturan Biaya Lainnya</h1>
+      <p className="mt-1 text-sm text-gray-500">
         Biaya berstatus aktif otomatis ditambahkan ke total order saat checkout.
       </p>
       <div className="mt-6">
         <FeeManager fees={fees} />
       </div>
-    </main>
+    </div>
   );
 }

@@ -18,11 +18,11 @@ export default async function Page({ params }: EditProdukPageProps) {
   if (!product) notFound();
 
   return (
-    <main className="mx-auto max-w-5xl px-4 py-10">
-      <h1 className="text-2xl font-bold text-neutral-900">Edit Produk: {product.name}</h1>
+    <div>
+      <h1 className="text-title-sm font-bold text-gray-800">Edit Produk: {product.name}</h1>
       <div className="mt-6">
         <ProductForm mode="edit" categories={categories} initialProduct={product} />
       </div>
-    </main>
+    </div>
   );
 }

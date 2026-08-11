@@ -8,7 +8,13 @@ import { useRouter } from "next/navigation";
 import { formatRupiah } from "@/lib/format";
 import { deleteFeeAction } from "@/lib/actions/fees";
 import { AdminConfirmDialog } from "@/components/admin/AdminConfirmDialog";
+import { Table, TableBody, TableCell, TableHeader, TableRow } from "@/components/admin/ui/Table";
+import { Badge } from "@/components/admin/ui/Badge";
+import { Alert } from "@/components/admin/ui/Alert";
 import type { AdminFeeListItem } from "@/lib/queries/admin-fees";
+
+const HEADER_CELL_CLASS = "px-5 py-3 text-start text-theme-xs font-medium uppercase text-gray-500";
+const BODY_CELL_CLASS = "px-5 py-4 text-start text-theme-sm text-gray-500";
 
 type AdminFeeTableProps = {
   fees: AdminFeeListItem[];
@@ -38,7 +44,7 @@ export function AdminFeeTable({ fees, onEdit }: AdminFeeTableProps) {
 
   if (fees.length === 0) {
     return (
-      <p className="rounded-lg border border-dashed border-neutral-300 p-8 text-center text-sm text-neutral-500">
+      <p className="rounded-2xl border border-dashed border-gray-300 p-8 text-center text-sm text-gray-500">
         Belum ada biaya.
       </p>
     );
@@ -46,56 +52,72 @@ export function AdminFeeTable({ fees, onEdit }: AdminFeeTableProps) {
 
   return (
     <>
-      {error && <p className="mb-3 text-sm text-red-600">{error}</p>}
-      <div className="overflow-x-auto rounded-xl border border-neutral-200">
-        <table className="w-full min-w-[560px] text-left text-sm">
-          <thead className="bg-neutral-50 text-xs font-medium uppercase text-neutral-500">
-            <tr>
-              <th className="px-4 py-3">Label</th>
-              <th className="px-4 py-3">Tipe</th>
-              <th className="px-4 py-3">Nilai</th>
-              <th className="px-4 py-3">Status</th>
-              <th className="px-4 py-3 text-right">Aksi</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-neutral-100">
-            {fees.map((fee) => (
-              <tr key={fee.id}>
-                <td className="px-4 py-3 font-medium text-neutral-900">{fee.label}</td>
-                <td className="px-4 py-3 text-neutral-600">{fee.feeType === "flat" ? "Flat" : "Persentase"}</td>
-                <td className="px-4 py-3 text-neutral-600">
-                  {fee.feeType === "flat" ? formatRupiah(fee.amount) : `${fee.amount}%`}
-                </td>
-                <td className="px-4 py-3">
-                  <span
-                    className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                      fee.isActive ? "bg-green-100 text-green-700" : "bg-neutral-100 text-neutral-500"
-                    }`}
-                  >
-                    {fee.isActive ? "Aktif" : "Nonaktif"}
-                  </span>
-                </td>
-                <td className="px-4 py-3 text-right">
-                  <div className="flex justify-end gap-3">
-                    <button type="button" onClick={() => onEdit(fee)} className="font-medium text-brand-red hover:underline">
-                      Edit
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setError(null);
-                        setPendingDeleteId(fee.id);
-                      }}
-                      className="font-medium text-neutral-500 hover:text-red-600"
-                    >
-                      Hapus
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      {error && (
+        <div className="mb-4">
+          <Alert variant="error" title="Gagal menghapus biaya" message={error} />
+        </div>
+      )}
+      <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white">
+        <div className="max-w-full overflow-x-auto">
+          <Table className="min-w-[640px]">
+            <TableHeader className="border-b border-gray-100">
+              <TableRow>
+                <TableCell isHeader className={HEADER_CELL_CLASS}>
+                  Label
+                </TableCell>
+                <TableCell isHeader className={HEADER_CELL_CLASS}>
+                  Tipe
+                </TableCell>
+                <TableCell isHeader className={HEADER_CELL_CLASS}>
+                  Nilai
+                </TableCell>
+                <TableCell isHeader className={HEADER_CELL_CLASS}>
+                  Status
+                </TableCell>
+                <TableCell isHeader className={`${HEADER_CELL_CLASS} text-right`}>
+                  Aksi
+                </TableCell>
+              </TableRow>
+            </TableHeader>
+            <TableBody className="divide-y divide-gray-100">
+              {fees.map((fee) => (
+                <TableRow key={fee.id}>
+                  <TableCell className={`${BODY_CELL_CLASS} font-medium text-gray-800`}>{fee.label}</TableCell>
+                  <TableCell className={BODY_CELL_CLASS}>{fee.feeType === "flat" ? "Flat" : "Persentase"}</TableCell>
+                  <TableCell className={BODY_CELL_CLASS}>
+                    {fee.feeType === "flat" ? formatRupiah(fee.amount) : `${fee.amount}%`}
+                  </TableCell>
+                  <TableCell className={BODY_CELL_CLASS}>
+                    <Badge size="sm" color={fee.isActive ? "success" : "light"}>
+                      {fee.isActive ? "Aktif" : "Nonaktif"}
+                    </Badge>
+                  </TableCell>
+                  <TableCell className={`${BODY_CELL_CLASS} text-right`}>
+                    <div className="flex justify-end gap-4">
+                      <button
+                        type="button"
+                        onClick={() => onEdit(fee)}
+                        className="font-medium text-brand-600 hover:underline"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setError(null);
+                          setPendingDeleteId(fee.id);
+                        }}
+                        className="font-medium text-gray-500 hover:text-error-600"
+                      >
+                        Hapus
+                      </button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
       </div>
 
       <AdminConfirmDialog

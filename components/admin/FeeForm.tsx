@@ -9,8 +9,19 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { saveFeeAction } from "@/lib/actions/fees";
+import { Label } from "@/components/admin/ui/form/Label";
+import { Input } from "@/components/admin/ui/form/Input";
+import { Select } from "@/components/admin/ui/form/Select";
+import { Checkbox } from "@/components/admin/ui/form/Checkbox";
+import { Button } from "@/components/admin/ui/Button";
+import { Alert } from "@/components/admin/ui/Alert";
 import type { AdminFeeListItem } from "@/lib/queries/admin-fees";
 import type { FeeType } from "@/types/database.types";
+
+const FEE_TYPE_OPTIONS = [
+  { value: "flat", label: "Nominal Tetap (Flat)" },
+  { value: "percentage", label: "Persentase" },
+];
 
 type FeeFormProps = {
   mode: "create" | "edit";
@@ -62,45 +73,30 @@ export function FeeForm({ mode, initialFee, onSaved, onCancelEdit }: FeeFormProp
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-3 rounded-xl border border-neutral-200 p-4">
-      <h2 className="text-sm font-semibold text-neutral-900">
+    <form onSubmit={handleSubmit} className="flex flex-col gap-4 rounded-2xl border border-gray-200 bg-white p-5">
+      <h2 className="text-base font-semibold text-gray-800">
         {mode === "edit" ? `Edit Biaya: ${initialFee?.label}` : "Tambah Biaya"}
       </h2>
 
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-        <div className="flex flex-col gap-1">
-          <label htmlFor="fee-label" className="text-sm font-medium text-neutral-700">
-            Label
-          </label>
-          <input
-            id="fee-label"
-            value={label}
-            onChange={(e) => setLabel(e.target.value)}
-            required
-            className="rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-brand-red focus:outline-none focus:ring-1 focus:ring-brand-red"
-          />
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+        <div>
+          <Label htmlFor="fee-label">Label</Label>
+          <Input id="fee-label" value={label} onChange={(e) => setLabel(e.target.value)} required />
         </div>
 
-        <div className="flex flex-col gap-1">
-          <label htmlFor="fee-type" className="text-sm font-medium text-neutral-700">
-            Tipe
-          </label>
-          <select
+        <div>
+          <Label htmlFor="fee-type">Tipe</Label>
+          <Select
             id="fee-type"
             value={feeType}
             onChange={(e) => setFeeType(e.target.value as FeeType)}
-            className="rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-brand-red focus:outline-none focus:ring-1 focus:ring-brand-red"
-          >
-            <option value="flat">Nominal Tetap (Flat)</option>
-            <option value="percentage">Persentase</option>
-          </select>
+            options={FEE_TYPE_OPTIONS}
+          />
         </div>
 
-        <div className="flex flex-col gap-1">
-          <label htmlFor="fee-amount" className="text-sm font-medium text-neutral-700">
-            {feeType === "flat" ? "Nilai (Rp)" : "Nilai (%)"}
-          </label>
-          <input
+        <div>
+          <Label htmlFor="fee-amount">{feeType === "flat" ? "Nilai (Rp)" : "Nilai (%)"}</Label>
+          <Input
             id="fee-amount"
             type="number"
             step="any"
@@ -108,39 +104,25 @@ export function FeeForm({ mode, initialFee, onSaved, onCancelEdit }: FeeFormProp
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
             required
-            className="rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-brand-red focus:outline-none focus:ring-1 focus:ring-brand-red"
           />
         </div>
       </div>
 
-      <label className="flex items-center gap-2 text-sm text-neutral-700">
-        <input
-          type="checkbox"
-          checked={isActive}
-          onChange={(e) => setIsActive(e.target.checked)}
-          className="h-4 w-4 rounded border-neutral-300"
-        />
+      <label className="flex items-center gap-2 text-sm text-gray-700">
+        <Checkbox checked={isActive} onChange={(e) => setIsActive(e.target.checked)} />
         Aktifkan biaya ini
       </label>
 
-      {error && <p className="text-sm text-red-600">{error}</p>}
+      {error && <Alert variant="error" title="Gagal menyimpan biaya" message={error} />}
 
       <div className="flex gap-3">
-        <button
-          type="submit"
-          disabled={isPending}
-          className="rounded-md bg-brand-red px-4 py-2 text-sm font-semibold text-white hover:bg-brand-red/90 disabled:opacity-60"
-        >
+        <Button type="submit" disabled={isPending}>
           {isPending ? "Menyimpan..." : mode === "edit" ? "Simpan Perubahan" : "Tambah Biaya"}
-        </button>
+        </Button>
         {mode === "edit" && (
-          <button
-            type="button"
-            onClick={onCancelEdit}
-            className="rounded-md border border-neutral-300 px-4 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-50"
-          >
+          <Button type="button" variant="outline" onClick={onCancelEdit}>
             Batal
-          </button>
+          </Button>
         )}
       </div>
     </form>

@@ -9,7 +9,9 @@
 
 import { redirect } from "next/navigation";
 import { getAdminSession } from "@/lib/auth/admin-session";
-import { AdminHeader } from "@/components/admin/AdminHeader";
+import { SidebarProvider } from "@/components/admin/layout/SidebarContext";
+import { AdminSidebar } from "@/components/admin/layout/AdminSidebar";
+import { AdminTopbar } from "@/components/admin/layout/AdminTopbar";
 
 export default async function AdminLayout({
   children,
@@ -20,9 +22,14 @@ export default async function AdminLayout({
   if (!session) redirect("/admin/login");
 
   return (
-    <div className="min-h-screen bg-neutral-50">
-      <AdminHeader admin={session} />
-      <div className="mx-auto max-w-5xl p-6">{children}</div>
-    </div>
+    <SidebarProvider>
+      <div className="min-h-screen bg-gray-50">
+        <AdminSidebar />
+        <div className="transition-all duration-300 ease-in-out lg:ml-[90px]">
+          <AdminTopbar admin={session} />
+          <main className="mx-auto max-w-6xl p-4 md:p-6">{children}</main>
+        </div>
+      </div>
+    </SidebarProvider>
   );
 }

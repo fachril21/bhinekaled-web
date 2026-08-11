@@ -7,6 +7,11 @@ import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { slugify } from "@/lib/slug";
 import { saveCategoryAction } from "@/lib/actions/categories";
+import { Label } from "@/components/admin/ui/form/Label";
+import { Input } from "@/components/admin/ui/form/Input";
+import { Select } from "@/components/admin/ui/form/Select";
+import { Button } from "@/components/admin/ui/Button";
+import { Alert } from "@/components/admin/ui/Alert";
 import type { AdminCategoryListItem } from "@/lib/queries/admin-categories";
 
 type CategoryFormProps = {
@@ -64,31 +69,23 @@ export function CategoryForm({ mode, initialCategory, categories, onSaved, onCan
     });
   }
 
+  const parentSelectOptions = parentOptions.map((c) => ({ value: c.id, label: c.name }));
+
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-3 rounded-xl border border-neutral-200 p-4">
-      <h2 className="text-sm font-semibold text-neutral-900">
+    <form onSubmit={handleSubmit} className="flex flex-col gap-4 rounded-2xl border border-gray-200 bg-white p-5">
+      <h2 className="text-base font-semibold text-gray-800">
         {mode === "edit" ? `Edit Kategori: ${initialCategory?.name}` : "Tambah Kategori"}
       </h2>
 
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-        <div className="flex flex-col gap-1">
-          <label htmlFor="category-name" className="text-sm font-medium text-neutral-700">
-            Nama
-          </label>
-          <input
-            id="category-name"
-            value={name}
-            onChange={(e) => handleNameChange(e.target.value)}
-            required
-            className="rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-brand-red focus:outline-none focus:ring-1 focus:ring-brand-red"
-          />
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+        <div>
+          <Label htmlFor="category-name">Nama</Label>
+          <Input id="category-name" value={name} onChange={(e) => handleNameChange(e.target.value)} required />
         </div>
 
-        <div className="flex flex-col gap-1">
-          <label htmlFor="category-slug" className="text-sm font-medium text-neutral-700">
-            Slug
-          </label>
-          <input
+        <div>
+          <Label htmlFor="category-slug">Slug</Label>
+          <Input
             id="category-slug"
             value={slug}
             onChange={(e) => {
@@ -96,48 +93,31 @@ export function CategoryForm({ mode, initialCategory, categories, onSaved, onCan
               setSlug(e.target.value);
             }}
             required
-            className="rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-brand-red focus:outline-none focus:ring-1 focus:ring-brand-red"
           />
         </div>
 
-        <div className="flex flex-col gap-1">
-          <label htmlFor="category-parent" className="text-sm font-medium text-neutral-700">
-            Kategori Induk
-          </label>
-          <select
+        <div>
+          <Label htmlFor="category-parent">Kategori Induk</Label>
+          <Select
             id="category-parent"
             value={parentId}
             onChange={(e) => setParentId(e.target.value)}
-            className="rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-brand-red focus:outline-none focus:ring-1 focus:ring-brand-red"
-          >
-            <option value="">Tidak ada (top-level)</option>
-            {parentOptions.map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.name}
-              </option>
-            ))}
-          </select>
+            placeholder="Tidak ada (top-level)"
+            options={parentSelectOptions}
+          />
         </div>
       </div>
 
-      {error && <p className="text-sm text-red-600">{error}</p>}
+      {error && <Alert variant="error" title="Gagal menyimpan kategori" message={error} />}
 
       <div className="flex gap-3">
-        <button
-          type="submit"
-          disabled={isPending}
-          className="rounded-md bg-brand-red px-4 py-2 text-sm font-semibold text-white hover:bg-brand-red/90 disabled:opacity-60"
-        >
+        <Button type="submit" disabled={isPending}>
           {isPending ? "Menyimpan..." : mode === "edit" ? "Simpan Perubahan" : "Tambah Kategori"}
-        </button>
+        </Button>
         {mode === "edit" && (
-          <button
-            type="button"
-            onClick={onCancelEdit}
-            className="rounded-md border border-neutral-300 px-4 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-50"
-          >
+          <Button type="button" variant="outline" onClick={onCancelEdit}>
             Batal
-          </button>
+          </Button>
         )}
       </div>
     </form>

@@ -4,6 +4,7 @@
 // tidak overlap (PaymentStatus vs OrderStatus).
 
 import type { PaymentStatus } from "@/types/database.types";
+import { Badge, type BadgeColor } from "@/components/admin/ui/Badge";
 
 type PaymentStatusBadgeProps = {
   status: PaymentStatus;
@@ -22,23 +23,23 @@ export const PAYMENT_STATUS_LABEL: Record<PaymentStatus, string> = {
   partially_refunded: "Direfund Sebagian",
 };
 
-const STATUS_CLASSNAME: Record<PaymentStatus, string> = {
-  "n/a": "bg-neutral-100 text-neutral-600",
-  unpaid: "bg-neutral-100 text-neutral-600",
-  pending: "bg-amber-100 text-amber-700",
-  paid: "bg-green-100 text-green-700",
-  failed: "bg-red-100 text-red-700",
-  cancelled: "bg-red-100 text-red-700",
-  expired: "bg-red-100 text-red-700",
-  review: "bg-amber-100 text-amber-700",
-  refunded: "bg-indigo-100 text-indigo-700",
-  partially_refunded: "bg-indigo-100 text-indigo-700",
+const STATUS_COLOR: Record<PaymentStatus, BadgeColor> = {
+  "n/a": "light",
+  unpaid: "light",
+  pending: "warning",
+  paid: "success",
+  failed: "error",
+  cancelled: "error",
+  expired: "error",
+  review: "warning",
+  refunded: "info",
+  partially_refunded: "info",
 };
 
 export function PaymentStatusBadge({ status }: PaymentStatusBadgeProps) {
   return (
-    <span className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${STATUS_CLASSNAME[status]}`}>
+    <Badge size="sm" color={STATUS_COLOR[status]}>
       {PAYMENT_STATUS_LABEL[status]}
-    </span>
+    </Badge>
   );
 }
