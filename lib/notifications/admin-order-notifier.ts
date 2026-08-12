@@ -19,9 +19,9 @@ export async function notifyAdminNewOrder(payload: AdminOrderNotificationPayload
 }
 
 /**
- * Epic 13: Midtrans Payment Integration — stub sama pola notifyAdminNewOrder
- * di atas, dipanggil non-blocking dari lib/payments/apply-status.ts begitu
- * payment_status pertama kali jadi 'paid'. Channel WA/email sungguhan tetap
+ * Epic 13: Duitku Payment Integration (POP) — stub sama pola notifyAdminNewOrder
+ * di atas, dipanggil non-blocking dari lib/payments/apply-duitku-status.ts
+ * begitu payment_status pertama kali jadi 'paid'. Channel WA/email sungguhan tetap
  * menunggu Epic 9 (belum ada keputusan channel dari PO), bukan scope epic ini.
  */
 export async function notifyAdminOrderPaid(payload: AdminOrderNotificationPayload): Promise<void> {

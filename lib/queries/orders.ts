@@ -31,10 +31,10 @@ export type OrderConfirmation = {
   items: OrderConfirmationItem[];
   fees: OrderConfirmationFee[];
   shippingCourierService: string | null;
-  // Epic 13: Midtrans Payment Integration
+  // Epic 13: Duitku Payment Integration (POP)
   paymentStatus: PaymentStatus;
-  customerEmail: string | null;
-  midtransTransactionStatus: string | null;
+  customerEmail: string;
+  duitkuResultCode: string | null;
 };
 
 /**
@@ -59,7 +59,7 @@ export async function getOrderByNumberForGuest(
   const { data: order, error: orderError } = await supabase
     .from("orders")
     .select(
-      "id, order_number, guest_session_id, customer_name, customer_phone, shipping_address, notes, subtotal, shipping_cost, total, status, created_at, shipping_courier_service, payment_status, customer_email, midtrans_transaction_status"
+      "id, order_number, guest_session_id, customer_name, customer_phone, shipping_address, notes, subtotal, shipping_cost, total, status, created_at, shipping_courier_service, payment_status, customer_email, duitku_result_code"
     )
     .eq("order_number", orderNumber)
     .maybeSingle();
@@ -112,7 +112,7 @@ export async function getOrderByNumberForGuest(
     shippingCourierService: order.shipping_courier_service,
     paymentStatus: order.payment_status,
     customerEmail: order.customer_email,
-    midtransTransactionStatus: order.midtrans_transaction_status,
+    duitkuResultCode: order.duitku_result_code,
   };
 }
 
@@ -218,13 +218,12 @@ export type AdminOrderDetail = {
   items: AdminOrderDetailItem[];
   shippingCourierService: string | null;
   shippingDestinationLabel: string | null;
-  // Epic 13: Midtrans Payment Integration
-  customerEmail: string | null;
-  midtransTransactionId: string | null;
-  midtransPaymentType: string | null;
-  midtransTransactionStatus: string | null;
-  midtransFraudStatus: string | null;
-  midtransLastNotificationAt: string | null;
+  // Epic 13: Duitku Payment Integration (POP)
+  customerEmail: string;
+  duitkuReference: string | null;
+  duitkuPaymentCode: string | null;
+  duitkuResultCode: string | null;
+  duitkuLastCallbackAt: string | null;
   paidAt: string | null;
 };
 
@@ -235,7 +234,7 @@ export async function getAdminOrderById(id: string): Promise<AdminOrderDetail | 
   const { data: order, error: orderError } = await supabase
     .from("orders")
     .select(
-      "id, order_number, customer_name, customer_phone, shipping_address, notes, subtotal, shipping_cost, total, status, payment_method, payment_status, created_at, updated_at, shipping_courier_service, shipping_destination_label, customer_email, midtrans_transaction_id, midtrans_payment_type, midtrans_transaction_status, midtrans_fraud_status, midtrans_last_notification_at, paid_at"
+      "id, order_number, customer_name, customer_phone, shipping_address, notes, subtotal, shipping_cost, total, status, payment_method, payment_status, created_at, updated_at, shipping_courier_service, shipping_destination_label, customer_email, duitku_reference, duitku_payment_code, duitku_result_code, duitku_last_callback_at, paid_at"
     )
     .eq("id", id)
     .maybeSingle();
@@ -267,11 +266,10 @@ export async function getAdminOrderById(id: string): Promise<AdminOrderDetail | 
     shippingCourierService: order.shipping_courier_service,
     shippingDestinationLabel: order.shipping_destination_label,
     customerEmail: order.customer_email,
-    midtransTransactionId: order.midtrans_transaction_id,
-    midtransPaymentType: order.midtrans_payment_type,
-    midtransTransactionStatus: order.midtrans_transaction_status,
-    midtransFraudStatus: order.midtrans_fraud_status,
-    midtransLastNotificationAt: order.midtrans_last_notification_at,
+    duitkuReference: order.duitku_reference,
+    duitkuPaymentCode: order.duitku_payment_code,
+    duitkuResultCode: order.duitku_result_code,
+    duitkuLastCallbackAt: order.duitku_last_callback_at,
     paidAt: order.paid_at,
     items: (itemRows ?? []).map((row) => ({
       id: row.id,

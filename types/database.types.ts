@@ -19,9 +19,10 @@ export type Json =
 
 export type ProductStatus = "draft" | "active" | "archived";
 export type OrderStatus = "menunggu_konfirmasi" | "diproses" | "dikirim" | "selesai" | "dibatalkan";
-// Epic 13: Midtrans Payment Integration — diperluas dari ("n/a","unpaid","paid")
-// untuk mencakup seluruh state transaction_status/fraud_status Midtrans yang
-// di-mapping (lihat lib/payments/status-mapping.ts).
+// Epic 13: Duitku Payment Integration (POP) — diperluas dari ("n/a","unpaid","paid").
+// Duitku callback hanya mengirim resultCode 00 (paid) / 01 (failed) — lihat
+// lib/payments/duitku-status-mapping.ts. State lain (refunded, review, dst)
+// tetap tersedia untuk transisi manual admin, tidak di-set otomatis dari callback.
 export type PaymentStatus =
   | "n/a"
   | "unpaid"
@@ -310,14 +311,13 @@ export type Database = {
           shipping_courier_code: string | null;
           shipping_courier_service: string | null;
           shipping_destination_label: string | null;
-          // Epic 13: Midtrans Payment Integration
-          customer_email: string | null;
-          midtrans_transaction_id: string | null;
-          midtrans_payment_type: string | null;
-          midtrans_transaction_status: string | null;
-          midtrans_fraud_status: string | null;
-          midtrans_raw_notification: Json | null;
-          midtrans_last_notification_at: string | null;
+          // Epic 13: Duitku Payment Integration (POP) — replaces Midtrans
+          customer_email: string;
+          duitku_reference: string | null;
+          duitku_payment_code: string | null;
+          duitku_result_code: string | null;
+          duitku_raw_callback: Json | null;
+          duitku_last_callback_at: string | null;
           paid_at: string | null;
           created_at: string;
           updated_at: string;
@@ -339,13 +339,12 @@ export type Database = {
           shipping_courier_code?: string | null;
           shipping_courier_service?: string | null;
           shipping_destination_label?: string | null;
-          customer_email?: string | null;
-          midtrans_transaction_id?: string | null;
-          midtrans_payment_type?: string | null;
-          midtrans_transaction_status?: string | null;
-          midtrans_fraud_status?: string | null;
-          midtrans_raw_notification?: Json | null;
-          midtrans_last_notification_at?: string | null;
+          customer_email: string;
+          duitku_reference?: string | null;
+          duitku_payment_code?: string | null;
+          duitku_result_code?: string | null;
+          duitku_raw_callback?: Json | null;
+          duitku_last_callback_at?: string | null;
           paid_at?: string | null;
           created_at?: string;
           updated_at?: string;
@@ -367,13 +366,12 @@ export type Database = {
           shipping_courier_code?: string | null;
           shipping_courier_service?: string | null;
           shipping_destination_label?: string | null;
-          customer_email?: string | null;
-          midtrans_transaction_id?: string | null;
-          midtrans_payment_type?: string | null;
-          midtrans_transaction_status?: string | null;
-          midtrans_fraud_status?: string | null;
-          midtrans_raw_notification?: Json | null;
-          midtrans_last_notification_at?: string | null;
+          customer_email?: string;
+          duitku_reference?: string | null;
+          duitku_payment_code?: string | null;
+          duitku_result_code?: string | null;
+          duitku_raw_callback?: Json | null;
+          duitku_last_callback_at?: string | null;
           paid_at?: string | null;
           created_at?: string;
           updated_at?: string;

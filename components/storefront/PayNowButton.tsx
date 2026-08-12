@@ -1,7 +1,6 @@
 "use client";
 
-// Epic 13: Midtrans Payment Integration (Snap Redirect)
-// Lihat docs/plan/epic-13-midtrans-payment-integration.md bagian 8.3.
+// Epic 13: Duitku Payment Integration (POP) — replaces Midtrans Snap.
 
 import { useState, useTransition } from "react";
 
@@ -17,7 +16,7 @@ export function PayNowButton({ orderNumber }: PayNowButtonProps) {
     setError(null);
     startTransition(async () => {
       try {
-        const res = await fetch("/api/payments/midtrans/token", {
+        const res = await fetch("/api/payments/duitku/invoice", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ orderNumber }),
@@ -28,7 +27,7 @@ export function PayNowButton({ orderNumber }: PayNowButtonProps) {
           return;
         }
         // window.location.href (bukan router.push) karena redirect menuju
-        // domain eksternal (Midtrans), bukan route internal Next.js.
+        // domain eksternal (Duitku), bukan route internal Next.js.
         window.location.href = data.redirectUrl;
       } catch {
         setError("Gagal terhubung ke server, periksa koneksi Anda.");

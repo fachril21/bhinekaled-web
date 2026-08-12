@@ -96,7 +96,7 @@ export default async function Page({ params }: OrderDetailPageProps) {
             </div>
             <div className="flex justify-between">
               <dt className="text-gray-500">Metode Pembayaran</dt>
-              <dd className="text-gray-800">{order.midtransPaymentType ?? order.paymentMethod ?? "—"}</dd>
+              <dd className="text-gray-800">{order.duitkuPaymentCode ?? order.paymentMethod ?? "—"}</dd>
             </div>
             <div className="flex justify-between">
               <dt className="text-gray-500">Status Pembayaran</dt>
@@ -105,13 +105,13 @@ export default async function Page({ params }: OrderDetailPageProps) {
               </dd>
             </div>
             <div className="flex justify-between">
-              <dt className="text-gray-500">No. Transaksi Midtrans</dt>
-              <dd className="text-gray-800">{order.midtransTransactionId ?? "—"}</dd>
+              <dt className="text-gray-500">Referensi Duitku</dt>
+              <dd className="text-gray-800">{order.duitkuReference ?? "—"}</dd>
             </div>
             <div className="flex justify-between">
-              <dt className="text-gray-500">Terakhir Notifikasi</dt>
+              <dt className="text-gray-500">Terakhir Callback</dt>
               <dd className="text-gray-800">
-                {order.midtransLastNotificationAt ? formatDate(order.midtransLastNotificationAt) : "—"}
+                {order.duitkuLastCallbackAt ? formatDate(order.duitkuLastCallbackAt) : "—"}
               </dd>
             </div>
             <div className="flex justify-between">

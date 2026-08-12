@@ -93,7 +93,7 @@ type PaymentSectionProps = {
   orderNumber: string;
 };
 
-/** Epic 13: Midtrans Payment Integration — lihat plan bagian 8.4 untuk matriks lengkap. */
+/** Epic 13: Duitku Payment Integration (POP) — replaces Midtrans Snap. */
 function PaymentSection({ paymentStatus, orderStatus, orderNumber }: PaymentSectionProps) {
   if (paymentStatus === "paid") {
     return (

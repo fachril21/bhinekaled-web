@@ -146,12 +146,11 @@ export function CheckoutForm({ items, subtotal, fees }: CheckoutFormProps) {
             type="tel"
           />
           <Field
-            label="Email (opsional, untuk struk pembayaran)"
+            label="Email (untuk struk & konfirmasi pembayaran)"
             value={values.customer_email}
             error={fieldErrors.customer_email}
             onChange={(v) => handleChange("customer_email", v)}
             type="email"
-            required={false}
           />
           <ShippingSelector onSelect={setSelectedShipping} />
           <Field

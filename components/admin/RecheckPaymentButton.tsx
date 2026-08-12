@@ -1,7 +1,6 @@
 "use client";
 
-// Epic 13: Midtrans Payment Integration (Snap Redirect) — US-13.4
-// Lihat docs/plan/epic-13-midtrans-payment-integration.md bagian 8.5.
+// Epic 13: Duitku Payment Integration (POP) — replaces Midtrans Snap.
 // Pola sama ClearShippingCacheButton (Epic 12): startTransition + router.refresh().
 
 import { useState, useTransition } from "react";

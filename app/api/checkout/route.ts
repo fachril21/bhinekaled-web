@@ -179,7 +179,7 @@ export async function POST(request: NextRequest) {
       guest_session_id: guestSessionId,
       customer_name,
       customer_phone,
-      customer_email: customer_email ?? null,
+      customer_email,
       shipping_address,
       notes: notes || null,
       subtotal,
