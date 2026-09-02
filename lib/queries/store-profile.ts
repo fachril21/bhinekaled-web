@@ -5,6 +5,7 @@
 // Disimpan sebagai singleton row (id = 1) di tabel store_profile, diisi admin
 // lewat /admin/pengaturan-toko.
 
+import { cache } from "react";
 import { createClient } from "@/lib/supabase/server";
 
 export type StoreProfile = {
@@ -37,8 +38,11 @@ function normalize(value: string | null | undefined): string | null {
  * kalau tabel belum ada (migration belum dijalankan) atau query gagal, balikan
  * EMPTY_STORE_PROFILE supaya layout tidak ikut jatuh — pola sama dengan
  * app/(storefront)/layout.tsx yang membungkus query kategori dengan try/catch.
+ *
+ * Di-cache pakai React cache() supaya layout + LegalPageLayout dalam satu
+ * render pass hanya sekali hit ke Supabase (pola sama getAdminSession).
  */
-export async function getStoreProfile(): Promise<StoreProfile> {
+export const getStoreProfile = cache(async (): Promise<StoreProfile> => {
   try {
     const supabase = await createClient();
     const { data, error } = await supabase
@@ -59,7 +63,7 @@ export async function getStoreProfile(): Promise<StoreProfile> {
   } catch {
     return EMPTY_STORE_PROFILE;
   }
-}
+});
 
 /** True kalau minimal satu dari telepon/alamat/email terisi — nama toko sendiri tidak dihitung. */
 export function hasAnyContactInfo(profile: StoreProfile): boolean {
