@@ -460,6 +460,38 @@ export type Database = {
         };
         Relationships: [];
       };
+      // Epic 10: Halaman Legal & Kebijakan — singleton row (id = 1) berisi
+      // kontak & identitas usaha yang tampil di footer + halaman legal.
+      store_profile: {
+        Row: {
+          id: number;
+          store_name: string;
+          store_city: string;
+          contact_phone: string;
+          contact_address: string;
+          contact_email: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: number;
+          store_name?: string;
+          store_city?: string;
+          contact_phone?: string;
+          contact_address?: string;
+          contact_email?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: number;
+          store_name?: string;
+          store_city?: string;
+          contact_phone?: string;
+          contact_address?: string;
+          contact_email?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
       additional_fees: {
         Row: {
           id: string;

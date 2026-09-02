@@ -15,6 +15,7 @@ import {
   OrderIcon,
   ProductIcon,
   ShippingIcon,
+  StoreIcon,
 } from "@/components/admin/icons";
 
 const NAV_ITEMS = [
@@ -24,6 +25,7 @@ const NAV_ITEMS = [
   { href: "/admin/order", label: "Order", icon: OrderIcon },
   { href: "/admin/biaya", label: "Biaya Lainnya", icon: FeeIcon },
   { href: "/admin/pengiriman", label: "Pengiriman", icon: ShippingIcon },
+  { href: "/admin/pengaturan-toko", label: "Pengaturan Toko", icon: StoreIcon },
 ];
 
 export function AdminSidebar() {

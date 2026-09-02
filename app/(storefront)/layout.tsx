@@ -3,6 +3,7 @@ import { Header } from "@/components/ui/Header";
 import { Footer } from "@/components/ui/Footer";
 import { getTopLevelCategoriesWithActiveProducts } from "@/lib/queries/categories";
 import type { CategorySummary } from "@/lib/queries/categories";
+import { getStoreProfile } from "@/lib/queries/store-profile";
 import { readGuestSessionId } from "@/lib/guest-session";
 import { getCartItemCount } from "@/lib/queries/cart";
 import { getWishlistItemCount } from "@/lib/queries/wishlist";
@@ -24,11 +25,15 @@ export default async function StorefrontLayout({ children }: { children: ReactNo
   // docs/plan/epic-2-cart-wishlist.md bagian 6.6.
   const { cartCount, wishlistCount } = await fetchHeaderCounts();
 
+  // getStoreProfile() sudah menangani error internal (balikan EMPTY_STORE_PROFILE),
+  // jadi tidak perlu try/catch di sini — lihat lib/queries/store-profile.ts.
+  const storeProfile = await getStoreProfile();
+
   return (
     <>
       <Header categories={categories} cartCount={cartCount} wishlistCount={wishlistCount} />
       <main className="flex-1">{children}</main>
-      <Footer categories={categories} />
+      <Footer categories={categories} profile={storeProfile} />
     </>
   );
 }
