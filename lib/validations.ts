@@ -141,3 +141,33 @@ export const additionalFeeFormSchema = z
     path: ["amount"],
   });
 export type AdditionalFeeFormValues = z.infer<typeof additionalFeeFormSchema>;
+
+// Epic 10: Admin Pengaturan Toko (Store Profile)
+// Semua field opsional — admin boleh isi bertahap. String kosong = "belum
+// diisi" (bukan error); dinormalisasi ke null saat dibaca publik di
+// lib/queries/store-profile.ts. Regex telepon sengaja longgar (angka, spasi,
+// + - ( )) — nomor telepon Indonesia punya banyak format.
+const CONTACT_PHONE_REGEX = /^[0-9()+\- ]+$/;
+
+export const storeProfileFormSchema = z.object({
+  storeName: z.string().trim().max(200, "Nama toko maksimal 200 karakter"),
+  storeCity: z.string().trim().max(120, "Nama kota maksimal 120 karakter"),
+  contactPhone: z
+    .string()
+    .trim()
+    .max(40, "Nomor telepon maksimal 40 karakter")
+    .refine(
+      (value) => value === "" || CONTACT_PHONE_REGEX.test(value),
+      "Nomor telepon hanya boleh berisi angka, spasi, dan tanda + - ( )",
+    ),
+  contactAddress: z.string().trim().max(500, "Alamat maksimal 500 karakter"),
+  contactEmail: z
+    .string()
+    .trim()
+    .max(200, "Email maksimal 200 karakter")
+    .refine(
+      (value) => value === "" || z.string().email().safeParse(value).success,
+      "Email tidak valid",
+    ),
+});
+export type StoreProfileFormValues = z.infer<typeof storeProfileFormSchema>;
