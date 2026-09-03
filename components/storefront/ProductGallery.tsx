@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useState } from "react";
+import { Icon } from "@/components/ui/Icon";
 import { isUnoptimizedImage } from "@/lib/image";
 import type { ProductImage } from "@/lib/queries/products";
 
@@ -63,19 +64,7 @@ export function ProductGallery({ images, productName }: ProductGalleryProps) {
 function ImagePlaceholder() {
   return (
     <div className="flex h-full w-full items-center justify-center text-neutral-300">
-      <svg
-        width="64"
-        height="64"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        aria-hidden="true"
-      >
-        <rect x="3" y="3" width="18" height="18" rx="2" />
-        <circle cx="8.5" cy="8.5" r="1.5" />
-        <path d="m21 15-5-5L5 21" />
-      </svg>
+      <Icon name="gallery" size={64} />
       <span className="sr-only">Gambar belum tersedia</span>
     </div>
   );

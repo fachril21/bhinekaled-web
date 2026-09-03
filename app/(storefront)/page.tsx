@@ -1,5 +1,6 @@
 import Link from "next/link";
-import type { ReactNode } from "react";
+import { Icon } from "@/components/ui/Icon";
+import type { SolarKey } from "@/lib/icons";
 import { ProductGrid } from "@/components/storefront/ProductGrid";
 import { getNewestProducts } from "@/lib/queries/products";
 import { getTopLevelCategoriesWithActiveProducts } from "@/lib/queries/categories";
@@ -137,11 +138,11 @@ function SunburstDecoration() {
 }
 
 function TrustBar() {
-  const TRUST_ITEMS: { label: string; icon: ReactNode }[] = [
-    { label: "Garansi Resmi", icon: <ShieldIcon /> },
-    { label: "Plug & Play", icon: <PlugIcon /> },
-    { label: "Pengiriman Nationwide", icon: <TruckIcon /> },
-    { label: "Kualitas Teruji", icon: <BadgeCheckIcon /> },
+  const TRUST_ITEMS: { label: string; icon: SolarKey }[] = [
+    { label: "Garansi Resmi", icon: "shieldCheck" },
+    { label: "Plug & Play", icon: "plug" },
+    { label: "Pengiriman Nationwide", icon: "shipping" },
+    { label: "Kualitas Teruji", icon: "verified" },
   ];
 
   return (
@@ -153,51 +154,13 @@ function TrustBar() {
             className="flex flex-col items-center gap-2 rounded-xl border border-neutral-200 p-4 text-center shadow-sm transition hover:shadow-lg sm:flex-row sm:text-left"
           >
             <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand-red/10 text-brand-red">
-              {item.icon}
+              <Icon name={item.icon} />
             </span>
             <span className="text-xs font-semibold text-neutral-900 sm:text-sm">{item.label}</span>
           </div>
         ))}
       </div>
     </div>
-  );
-}
-
-function ShieldIcon() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
-      <path d="M12 3 4 6v6c0 4.4 3.2 8.2 8 9 4.8-.8 8-4.6 8-9V6l-8-3Z" strokeLinejoin="round" />
-      <path d="m9 12 2 2 4-4" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
-
-function PlugIcon() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
-      <path d="M13 2 3 14h7l-1 8 10-12h-7l1-8Z" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
-
-function TruckIcon() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
-      <circle cx="7" cy="18" r="1.6" fill="currentColor" stroke="none" />
-      <circle cx="17" cy="18" r="1.6" fill="currentColor" stroke="none" />
-      <path d="M3 6h11v9H3z" strokeLinejoin="round" />
-      <path d="M14 10h4l3 3v2h-7z" strokeLinejoin="round" />
-    </svg>
-  );
-}
-
-function BadgeCheckIcon() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
-      <circle cx="12" cy="10" r="7" strokeLinejoin="round" />
-      <path d="m9 10 2 2 4-4" strokeLinecap="round" strokeLinejoin="round" />
-      <path d="m8 16-1.5 6L12 19l5.5 3L16 16" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
   );
 }
 

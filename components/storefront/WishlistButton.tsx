@@ -2,6 +2,7 @@
 
 import { useActionState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { Icon } from "@/components/ui/Icon";
 import { toggleWishlistItemForm, type WishlistActionResult } from "@/lib/actions/wishlist";
 
 type WishlistButtonProps = {
@@ -39,7 +40,7 @@ export function WishlistButton({ productId, initialIsWishlisted }: WishlistButto
             isWishlisted ? "text-brand-red" : "text-neutral-500 hover:text-brand-red"
           }`}
         >
-          <HeartIcon filled={isWishlisted} />
+          <Icon name={isWishlisted ? "heartFilled" : "heart"} size={18} />
         </button>
       </form>
       {errorMessage && (
@@ -51,24 +52,5 @@ export function WishlistButton({ productId, initialIsWishlisted }: WishlistButto
         </p>
       )}
     </div>
-  );
-}
-
-function HeartIcon({ filled }: { filled: boolean }) {
-  return (
-    <svg
-      width="18"
-      height="18"
-      viewBox="0 0 24 24"
-      fill={filled ? "currentColor" : "none"}
-      stroke="currentColor"
-      strokeWidth="2"
-      aria-hidden="true"
-    >
-      <path
-        d="M12 21s-7.5-4.6-10-9.3C0.4 8.2 2 4 6 4c2 0 3.5 1 4 2.2C10.5 5 12 4 14 4c4 0 5.6 4.2 4 7.7C19.5 16.4 12 21 12 21Z"
-        strokeLinejoin="round"
-      />
-    </svg>
   );
 }

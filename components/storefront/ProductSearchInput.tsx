@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
+import { Icon } from "@/components/ui/Icon";
 
 type ProductSearchInputProps = {
   initialValue?: string;
@@ -24,7 +25,7 @@ export function ProductSearchInput({ initialValue = "" }: ProductSearchInputProp
       role="search"
       className="flex items-center gap-2 rounded-full border border-neutral-300 bg-neutral-50 px-3 py-1.5 focus-within:border-brand-red"
     >
-      <SearchIcon />
+      <Icon name="search" size={16} className="shrink-0 text-neutral-400" />
       <input
         type="search"
         value={value}
@@ -34,23 +35,5 @@ export function ProductSearchInput({ initialValue = "" }: ProductSearchInputProp
         className="w-full bg-transparent text-sm text-neutral-900 outline-none placeholder:text-neutral-400"
       />
     </form>
-  );
-}
-
-function SearchIcon() {
-  return (
-    <svg
-      width="16"
-      height="16"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      aria-hidden="true"
-      className="shrink-0 text-neutral-400"
-    >
-      <circle cx="11" cy="11" r="7" />
-      <path d="m21 21-4.35-4.35" strokeLinecap="round" />
-    </svg>
   );
 }

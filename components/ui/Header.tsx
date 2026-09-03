@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { Icon } from "@/components/ui/Icon";
 import { ProductSearchInput } from "@/components/storefront/ProductSearchInput";
 import type { CategorySummary } from "@/lib/queries/categories";
 
@@ -43,7 +44,7 @@ export function Header({ categories, cartCount = 0, wishlistCount = 0 }: HeaderP
             aria-label="Wishlist"
             className="relative -m-2 flex h-11 w-11 items-center justify-center hover:text-brand-red"
           >
-            <HeartIcon />
+            <Icon name="heart" />
             {wishlistCount > 0 && <CountBadge count={wishlistCount} />}
           </Link>
           <Link
@@ -51,7 +52,7 @@ export function Header({ categories, cartCount = 0, wishlistCount = 0 }: HeaderP
             aria-label="Keranjang belanja"
             className="relative -m-2 flex h-11 w-11 items-center justify-center hover:text-brand-red"
           >
-            <CartIcon />
+            <Icon name="cart" />
             {cartCount > 0 && <CountBadge count={cartCount} />}
           </Link>
         </nav>
@@ -65,46 +66,5 @@ function CountBadge({ count }: { count: number }) {
     <span className="absolute -right-2 -top-2 flex h-4 min-w-4 items-center justify-center rounded-full bg-brand-red px-1 text-[10px] font-bold text-white">
       {count > 99 ? "99+" : count}
     </span>
-  );
-}
-
-function HeartIcon() {
-  return (
-    <svg
-      width="20"
-      height="20"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      aria-hidden="true"
-    >
-      <path
-        d="M12 21s-7.5-4.6-10-9.3C0.4 8.2 2 4 6 4c2 0 3.5 1 4 2.2C10.5 5 12 4 14 4c4 0 5.6 4.2 4 7.7C19.5 16.4 12 21 12 21Z"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
-
-function CartIcon() {
-  return (
-    <svg
-      width="20"
-      height="20"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      aria-hidden="true"
-    >
-      <circle cx="9" cy="20" r="1.4" fill="currentColor" stroke="none" />
-      <circle cx="17" cy="20" r="1.4" fill="currentColor" stroke="none" />
-      <path
-        d="M2 3h2l2.6 12.2A2 2 0 0 0 8.5 17h8.9a2 2 0 0 0 1.9-1.4L21 7H6"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
   );
 }

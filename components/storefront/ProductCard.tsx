@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { Icon } from "@/components/ui/Icon";
 import { Price } from "@/components/ui/Price";
 import { AddToCartButton } from "@/components/storefront/AddToCartButton";
 import { WishlistButton } from "@/components/storefront/WishlistButton";
@@ -37,7 +38,7 @@ export function ProductCard({ product, isWishlisted, priority = false }: Product
             </span>
           )}
           {!product.inStock && (
-            <span className="absolute right-2 top-2 rounded-full bg-neutral-900/80 px-2 py-0.5 text-xs font-semibold text-white">
+            <span className="absolute left-2 top-2 rounded-full bg-neutral-900/80 px-2 py-0.5 text-xs font-semibold text-white">
               Stok Habis
             </span>
           )}
@@ -75,19 +76,7 @@ export function ProductCard({ product, isWishlisted, priority = false }: Product
 function ImagePlaceholder() {
   return (
     <div className="flex h-full w-full items-center justify-center text-neutral-300">
-      <svg
-        width="40"
-        height="40"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        aria-hidden="true"
-      >
-        <rect x="3" y="3" width="18" height="18" rx="2" />
-        <circle cx="8.5" cy="8.5" r="1.5" />
-        <path d="m21 15-5-5L5 21" />
-      </svg>
+      <Icon name="gallery" size={40} />
       <span className="sr-only">Gambar belum tersedia</span>
     </div>
   );
