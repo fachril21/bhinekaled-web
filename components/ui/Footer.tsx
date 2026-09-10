@@ -41,7 +41,7 @@ export function Footer({ categories, profile }: FooterProps) {
               <ul className="space-y-2 text-sm">
                 {categories.map((category) => (
                   <li key={category.slug}>
-                    <Link href={`/kategori/${category.slug}`} className="hover:text-white">
+                    <Link href={`/kategori/${category.slug}`} prefetch={false} className="hover:text-white">
                       {category.name}
                     </Link>
                   </li>
@@ -80,7 +80,7 @@ export function Footer({ categories, profile }: FooterProps) {
             <ul className="space-y-2 text-sm">
               {INFO_LINKS.map((link) => (
                 <li key={link.href}>
-                  <Link href={link.href} className="hover:text-white">
+                  <Link href={link.href} prefetch={false} className="hover:text-white">
                     {link.label}
                   </Link>
                 </li>

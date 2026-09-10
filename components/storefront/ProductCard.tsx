@@ -16,7 +16,10 @@ type ProductCardProps = {
 export function ProductCard({ product, isWishlisted, priority = false }: ProductCardProps) {
   return (
     <div className="group relative flex flex-col overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-lg">
-      <Link href={`/produk/${product.slug}`} className="flex flex-1 flex-col">
+      {/* prefetch={false}: grid bisa 24+ kartu — prefetch on-hover saja, jangan
+          eager (kalau tidak, tiap router.refresh() dari add-to-cart memicu
+          puluhan request RSC sekaligus). */}
+      <Link href={`/produk/${product.slug}`} prefetch={false} className="flex flex-1 flex-col">
         <div className="relative aspect-square w-full overflow-hidden bg-neutral-100">
           {product.imageUrl ? (
             <Image
@@ -61,6 +64,7 @@ export function ProductCard({ product, isWishlisted, priority = false }: Product
         {product.hasVariants ? (
           <Link
             href={`/produk/${product.slug}`}
+            prefetch={false}
             className="block w-full rounded-full border border-brand-red px-4 py-2 text-center text-sm font-semibold text-brand-red transition hover:bg-brand-red hover:text-white"
           >
             Pilih Varian
