@@ -1,7 +1,12 @@
 import { Price } from "@/components/ui/Price";
 import { formatDate } from "@/lib/format";
 import { PayNowButton } from "@/components/storefront/PayNowButton";
+import { PaymentStatusPoller } from "@/components/storefront/PaymentStatusPoller";
 import type { OrderConfirmation } from "@/lib/queries/orders";
+
+// payment_status yang masih bisa berubah jadi 'paid' → halaman auto-refresh
+// menunggu sinkronisasi status dari Duitku.
+const PENDING_PAYMENT_STATUSES = new Set(["n/a", "unpaid", "pending"]);
 
 const STATUS_LABEL: Record<OrderConfirmation["status"], string> = {
   menunggu_konfirmasi: "Menunggu Konfirmasi",
@@ -36,6 +41,9 @@ export function OrderConfirmationCard({ order }: OrderConfirmationCardProps) {
       </div>
 
       <PaymentSection paymentStatus={order.paymentStatus} orderStatus={order.status} orderNumber={order.orderNumber} />
+      <PaymentStatusPoller
+        active={order.status !== "dibatalkan" && PENDING_PAYMENT_STATUSES.has(order.paymentStatus)}
+      />
 
       <div className="rounded-xl border border-neutral-200 p-5">
         <h2 className="mb-3 text-sm font-semibold text-neutral-900">Ringkasan Pesanan</h2>

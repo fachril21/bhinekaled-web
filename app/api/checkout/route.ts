@@ -30,6 +30,8 @@ import {
   type StockGuardTarget,
 } from "@/lib/checkout/stock-guard";
 import { notifyAdminNewOrder } from "@/lib/notifications/admin-order-notifier";
+import { createInvoice } from "@/lib/payments/duitku-client";
+import { sendAwaitingPaymentEmail } from "@/lib/email/send-order-emails";
 import { calculateFees, sumFees, type CalculatedFee } from "@/lib/fees";
 import { getShippingOriginId } from "@/lib/checkout-config";
 import { calculateCartWeightGram } from "@/lib/shipping/weight";
@@ -235,11 +237,43 @@ export async function POST(request: NextRequest) {
 
   await supabase.from("cart_items").delete().eq("guest_session_id", guestSessionId);
 
+  // Epic 14: pre-generate invoice Duitku supaya link "Bayar Sekarang" bisa
+  // langsung ditaruh di email "Menunggu Pembayaran" (halaman /checkout/sukses
+  // cookie-gated, tidak bisa dibuka dari email di device lain). Best-effort:
+  // kegagalan Duitku TIDAK menggagalkan order — email tetap terkirim, hanya
+  // tanpa tombol bayar; customer bisa bayar dari halaman lacak / /checkout/sukses.
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL;
+  let paymentUrl: string | null = null;
+  try {
+    const invoice = await createInvoice({
+      orderNumber: order.order_number,
+      grossAmount: total,
+      productDetails: `Pembayaran BHINEKALED - ${order.order_number}`,
+      customerName: customer_name,
+      customerPhone: customer_phone,
+      customerEmail: customer_email,
+      callbackUrl: `${appUrl}/api/payments/duitku/callback`,
+      returnUrl: `${appUrl}/checkout/sukses/${order.order_number}`,
+    });
+    paymentUrl = invoice.paymentUrl;
+    await supabase
+      .from("orders")
+      .update({ payment_status: "pending", duitku_reference: invoice.reference })
+      .eq("id", order.id);
+  } catch (err) {
+    console.error(`[checkout] gagal pre-generate invoice Duitku untuk ${order.order_number}:`, err);
+  }
+
   notifyAdminNewOrder({ orderNumber: order.order_number, customerName: customer_name, total }).catch(
     () => {
       // non-blocking — kegagalan notifikasi tidak boleh mempengaruhi response checkout
     }
   );
+
+  // Epic 14: email "Menunggu Pembayaran" ke customer. Di-await (helper-nya
+  // sudah menelan error sendiri, jadi tidak akan pernah menggagalkan checkout)
+  // supaya tidak terpotong saat function serverless dimatikan setelah respons.
+  await sendAwaitingPaymentEmail({ orderId: order.id, paymentUrl });
 
   return NextResponse.json({ orderNumber: order.order_number }, { status: 200 });
 }

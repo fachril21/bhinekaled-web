@@ -10,6 +10,9 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 const notifyAdminOrderPaid = vi.fn().mockResolvedValue(undefined);
 vi.mock("@/lib/notifications/admin-order-notifier", () => ({ notifyAdminOrderPaid }));
 
+const sendPaymentConfirmedEmail = vi.fn().mockResolvedValue(undefined);
+vi.mock("@/lib/email/send-order-emails", () => ({ sendPaymentConfirmedEmail }));
+
 type OrderRow = {
   id: string;
   order_number: string;
@@ -40,6 +43,7 @@ vi.mock("@/lib/supabase/admin", () => ({
 
 beforeEach(() => {
   notifyAdminOrderPaid.mockClear();
+  sendPaymentConfirmedEmail.mockClear();
 });
 
 const baseOrder: OrderRow = {
@@ -126,6 +130,34 @@ describe("applyDuitkuStatusUpdate", () => {
       customerName: "John Doe",
       total: 150000,
     });
+  });
+
+  it("sends the customer 'payment received' email exactly once when payment newly becomes paid", async () => {
+    supabaseMock = buildSupabaseMock({ ...baseOrder });
+    const { applyDuitkuStatusUpdate } = await import("./apply-duitku-status");
+
+    await applyDuitkuStatusUpdate({ orderId: "order-1", reference: "DXXXX", paymentStatus: "paid", sourceCode: "00", paymentCode: "VC", rawCallback: {} });
+
+    expect(sendPaymentConfirmedEmail).toHaveBeenCalledTimes(1);
+    expect(sendPaymentConfirmedEmail).toHaveBeenCalledWith({ orderId: "order-1" });
+  });
+
+  it("does not email the customer on a duplicate (idempotent) callback", async () => {
+    supabaseMock = buildSupabaseMock({ ...baseOrder, duitku_reference: "DXXXX", duitku_result_code: "00", payment_status: "paid" });
+    const { applyDuitkuStatusUpdate } = await import("./apply-duitku-status");
+
+    await applyDuitkuStatusUpdate({ orderId: "order-1", reference: "DXXXX", paymentStatus: "paid", sourceCode: "00", paymentCode: "VC", rawCallback: {} });
+
+    expect(sendPaymentConfirmedEmail).not.toHaveBeenCalled();
+  });
+
+  it("does not email the customer when payment resolves to a non-paid state", async () => {
+    supabaseMock = buildSupabaseMock({ ...baseOrder });
+    const { applyDuitkuStatusUpdate } = await import("./apply-duitku-status");
+
+    await applyDuitkuStatusUpdate({ orderId: "order-1", reference: "DXXXX", paymentStatus: "failed", sourceCode: "01", paymentCode: "VC", rawCallback: {} });
+
+    expect(sendPaymentConfirmedEmail).not.toHaveBeenCalled();
   });
 
   it("does not notify admin or auto-advance status when paymentStatus is 'failed'", async () => {

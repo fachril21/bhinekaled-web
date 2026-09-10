@@ -15,6 +15,7 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import type { PaymentStatus } from "@/types/database.types";
 import { notifyAdminOrderPaid } from "@/lib/notifications/admin-order-notifier";
+import { sendPaymentConfirmedEmail } from "@/lib/email/send-order-emails";
 
 export type ApplyDuitkuStatusParams = {
   orderId: string; // orders.id
@@ -69,6 +70,13 @@ export async function applyDuitkuStatusUpdate(params: ApplyDuitkuStatusParams): 
     notifyAdminOrderPaid({ orderNumber: order.order_number, customerName: order.customer_name, total: order.total }).catch(() => {
       // non-blocking — kegagalan notifikasi tidak boleh mempengaruhi hasil callback
     });
+    // Epic 14: email "Pembayaran Diterima" ke customer. Di sini (bukan di
+    // callback route) supaya jalur rekonsiliasi manual admin ("Cek Ulang
+    // Status Pembayaran") juga ikut mengirim email saat status pertama kali
+    // jadi paid. Di-await (bukan fire-and-forget) supaya tidak terpotong saat
+    // function serverless dimatikan setelah respons — helper-nya sudah menelan
+    // error-nya sendiri, jadi ini tidak akan pernah menggagalkan callback.
+    await sendPaymentConfirmedEmail({ orderId: order.id });
   }
 
   return { applied: true };

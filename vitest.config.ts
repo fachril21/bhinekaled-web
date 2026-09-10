@@ -13,7 +13,17 @@ export default defineConfig({
     exclude: ["node_modules", ".next"],
     coverage: {
       provider: "v8",
-      include: ["lib/payments/**", "app/api/payments/**", "lib/actions/payments.ts"],
+      include: [
+        "lib/payments/**",
+        "app/api/payments/**",
+        "lib/actions/payments.ts",
+        // Epic 14: Email Transaksional Order. Catatan: app/api/checkout/route.ts
+        // sengaja tidak masuk gate coverage - alur checkout inti (Epic 3/11/12)
+        // belum punya test suite sendiri; wiring email/invoice epic ini dijamin
+        // lewat app/api/checkout/route.test.ts secara perilaku.
+        "lib/email/**",
+        "lib/orders/tracking-display.ts",
+      ],
       thresholds: {
         lines: 80,
         functions: 80,

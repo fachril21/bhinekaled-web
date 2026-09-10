@@ -116,6 +116,129 @@ export async function getOrderByNumberForGuest(
   };
 }
 
+// Epic 14: Email Transaksional Order.
+//
+// Baca order lewat orders.id (UUID, TIDAK ditebak) pakai createAdminClient()
+// — RLS publik tidak mengizinkan SELECT di orders/order_items/order_fees.
+// UUID sendiri yang jadi "access token" halaman lacak & isi email; scope
+// query SELALU `.eq("id", orderId)` persis, tidak pernah range/ilike.
+
+export type OrderInvoiceItem = {
+  name: string;
+  qty: number;
+  unitPrice: number;
+  lineTotal: number;
+};
+
+export type OrderInvoiceData = {
+  orderId: string;
+  orderNumber: string;
+  customerName: string;
+  customerEmail: string;
+  items: OrderInvoiceItem[];
+  fees: { label: string; amount: number }[];
+  shippingLabel: string | null;
+  shippingCost: number;
+  total: number;
+  paidAt: string | null;
+};
+
+function itemDisplayName(productName: string, variantName: string | null): string {
+  return variantName ? `${productName} - ${variantName}` : productName;
+}
+
+/** Data lengkap untuk merender email invoice (pending & paid). */
+export async function getOrderInvoiceById(orderId: string): Promise<OrderInvoiceData | null> {
+  const supabase = createAdminClient();
+
+  const { data: order, error: orderError } = await supabase
+    .from("orders")
+    .select(
+      "id, order_number, customer_name, customer_email, subtotal, shipping_cost, shipping_courier_service, total, paid_at"
+    )
+    .eq("id", orderId)
+    .maybeSingle();
+  if (orderError) throw orderError;
+  if (!order) return null;
+
+  const { data: itemRows, error: itemsError } = await supabase
+    .from("order_items")
+    .select("product_name_snapshot, variant_name_snapshot, price_snapshot, qty, subtotal")
+    .eq("order_id", order.id)
+    .order("created_at", { ascending: true });
+  if (itemsError) throw itemsError;
+
+  const { data: feeRows, error: feesError } = await supabase
+    .from("order_fees")
+    .select("label_snapshot, amount")
+    .eq("order_id", order.id)
+    .order("created_at", { ascending: true });
+  if (feesError) throw feesError;
+
+  return {
+    orderId: order.id,
+    orderNumber: order.order_number,
+    customerName: order.customer_name,
+    customerEmail: order.customer_email,
+    items: (itemRows ?? []).map((row) => ({
+      name: itemDisplayName(row.product_name_snapshot, row.variant_name_snapshot),
+      qty: row.qty,
+      unitPrice: row.price_snapshot,
+      lineTotal: row.subtotal,
+    })),
+    fees: (feeRows ?? []).map((row) => ({ label: row.label_snapshot, amount: row.amount })),
+    shippingLabel: order.shipping_courier_service,
+    shippingCost: order.shipping_cost,
+    total: order.total,
+    paidAt: order.paid_at,
+  };
+}
+
+export type OrderTracking = {
+  orderNumber: string;
+  status: OrderStatus;
+  paymentStatus: PaymentStatus;
+  total: number;
+  createdAt: string;
+  items: { name: string; qty: number }[];
+};
+
+/**
+ * Data minimal & aman-publik untuk halaman /lacak/[id]. TIDAK mengembalikan
+ * nama/alamat/no. HP customer — cuma status pesanan, status pembayaran,
+ * total, dan daftar item.
+ */
+export async function getOrderTrackingById(orderId: string): Promise<OrderTracking | null> {
+  const supabase = createAdminClient();
+
+  const { data: order, error: orderError } = await supabase
+    .from("orders")
+    .select("order_number, status, payment_status, total, created_at")
+    .eq("id", orderId)
+    .maybeSingle();
+  if (orderError) throw orderError;
+  if (!order) return null;
+
+  const { data: itemRows, error: itemsError } = await supabase
+    .from("order_items")
+    .select("product_name_snapshot, variant_name_snapshot, qty")
+    .eq("order_id", orderId)
+    .order("created_at", { ascending: true });
+  if (itemsError) throw itemsError;
+
+  return {
+    orderNumber: order.order_number,
+    status: order.status,
+    paymentStatus: order.payment_status,
+    total: order.total,
+    createdAt: order.created_at,
+    items: (itemRows ?? []).map((row) => ({
+      name: itemDisplayName(row.product_name_snapshot, row.variant_name_snapshot),
+      qty: row.qty,
+    })),
+  };
+}
+
 // Epic 7: Admin Kelola Order — lihat docs/plan/epic-7-admin-kelola-order.md.
 // Fungsi di bawah ini SELALU pakai createClient() (sesi admin, RLS is_admin())
 // dan HANYA dipanggil dari route yang sudah lolos getAdminSession() di
