@@ -59,6 +59,14 @@ export default async function Page({ params }: OrderDetailPageProps) {
               <dd className="text-gray-800">{order.customerPhone}</dd>
             </div>
             <div>
+              <dt className="text-gray-500">Email</dt>
+              <dd className="text-gray-800">
+                <a href={`mailto:${order.customerEmail}`} className="text-brand-600 hover:underline">
+                  {order.customerEmail}
+                </a>
+              </dd>
+            </div>
+            <div>
               <dt className="text-gray-500">Alamat</dt>
               <dd className="text-gray-800">{order.shippingAddress}</dd>
             </div>
