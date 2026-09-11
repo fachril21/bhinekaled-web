@@ -20,8 +20,10 @@ export function CartQuantityStepper({ cartItemId, qty, availableStock }: CartQua
   useEffect(() => {
     if (state?.success) {
       router.refresh();
+    } else if (state && !state.success) {
+      console.error("[CartQuantityStepper] Gagal mengubah qty cart item:", { cartItemId, error: state.error });
     }
-  }, [state, router]);
+  }, [state, router, cartItemId]);
 
   return (
     <div>

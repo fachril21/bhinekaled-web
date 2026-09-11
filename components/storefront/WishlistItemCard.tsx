@@ -23,8 +23,10 @@ export function WishlistItemCard({ item }: WishlistItemCardProps) {
   useEffect(() => {
     if (state?.success) {
       router.refresh();
+    } else if (state && !state.success) {
+      console.error("[WishlistItemCard] Gagal menghapus wishlist item:", { wishlistItemId: item.id, error: state.error });
     }
-  }, [state, router]);
+  }, [state, router, item.id]);
 
   return (
     <div className="group relative flex flex-col overflow-hidden rounded-2xl border border-neutral-200 bg-white">

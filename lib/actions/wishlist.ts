@@ -63,7 +63,8 @@ export async function toggleWishlistItem(productId: string): Promise<WishlistAct
 
     revalidatePath("/wishlist");
     return { success: true, isWishlisted: true };
-  } catch {
+  } catch (error) {
+    console.error("[toggleWishlistItem] Gagal toggle wishlist item:", { productId: parsed.data, error });
     return { success: false, error: GENERIC_ERROR };
   }
 }
@@ -87,7 +88,8 @@ export async function removeWishlistItem(wishlistItemId: string): Promise<Wishli
 
     revalidatePath("/wishlist");
     return { success: true, isWishlisted: false };
-  } catch {
+  } catch (error) {
+    console.error("[removeWishlistItem] Gagal menghapus wishlist item:", { wishlistItemId: parsed.data, error });
     return { success: false, error: GENERIC_ERROR };
   }
 }

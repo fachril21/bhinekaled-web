@@ -98,7 +98,8 @@ export async function addCartItem(input: {
 
     revalidatePath("/cart");
     return { success: true };
-  } catch {
+  } catch (error) {
+    console.error("[addCartItem] Gagal menambah item ke cart:", { productId, variantId, qty, error });
     return { success: false, error: GENERIC_ERROR };
   }
 }
@@ -168,7 +169,8 @@ export async function updateCartItemQty(input: {
 
     revalidatePath("/cart");
     return { success: true };
-  } catch {
+  } catch (error) {
+    console.error("[updateCartItemQty] Gagal mengubah qty cart item:", { cartItemId, qty, error });
     return { success: false, error: GENERIC_ERROR };
   }
 }
@@ -192,7 +194,8 @@ export async function removeCartItem(cartItemId: string): Promise<CartActionResu
 
     revalidatePath("/cart");
     return { success: true };
-  } catch {
+  } catch (error) {
+    console.error("[removeCartItem] Gagal menghapus cart item:", { cartItemId: parsed.data, error });
     return { success: false, error: GENERIC_ERROR };
   }
 }

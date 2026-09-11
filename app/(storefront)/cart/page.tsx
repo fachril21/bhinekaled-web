@@ -63,7 +63,8 @@ async function fetchCartSummary(guestSessionId: string) {
   try {
     const summary = await getCartItems(guestSessionId);
     return { status: "ok" as const, summary };
-  } catch {
+  } catch (error) {
+    console.error("[CartPage] Gagal memuat cart items:", error);
     return { status: "error" as const };
   }
 }

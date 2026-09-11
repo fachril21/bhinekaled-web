@@ -24,8 +24,10 @@ export function CartItemRow({ item }: CartItemRowProps) {
   useEffect(() => {
     if (state?.success) {
       router.refresh();
+    } else if (state && !state.success) {
+      console.error("[CartItemRow] Gagal menghapus item cart:", { cartItemId: item.id, error: state.error });
     }
-  }, [state, router]);
+  }, [state, router, item.id]);
 
   return (
     <div className="flex gap-4 border-b border-neutral-200 py-4 last:border-b-0">

@@ -54,7 +54,8 @@ async function fetchWishlistItems(guestSessionId: string) {
   try {
     const items = await getWishlistItems(guestSessionId);
     return { status: "ok" as const, items };
-  } catch {
+  } catch (error) {
+    console.error("[WishlistPage] Gagal memuat wishlist items:", error);
     return { status: "error" as const, items: [] };
   }
 }
